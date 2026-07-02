@@ -4215,7 +4215,7 @@
   </button>
 
   <!-- Chatbot Window (God Tier 3D Hologram) -->
-  <div id="chatbot-window" class="fixed bottom-28 right-6 w-80 sm:w-[400px] h-[550px] glass-card rounded-2xl shadow-[0_0_50px_rgba(79,70,229,0.3)] z-50 flex flex-col overflow-hidden transform translate-y-12 opacity-0 pointer-events-none transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1) ring-2 ring-inset ring-cyan-500/30 group">
+  <div id="chatbot-window" class="fixed bottom-28 right-6 w-80 sm:w-[400px] h-[550px] glass-card rounded-2xl shadow-[0_0_50px_rgba(79,70,229,0.3)] z-50 flex flex-col overflow-hidden transform translate-y-8 opacity-0 pointer-events-none transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1) ring-2 ring-inset ring-cyan-500/30 group">
     <!-- Rotating Hologram Border -->
     <div class="absolute inset-[-2px] bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-indigo-500 rounded-2xl animate-spin-slow opacity-20 pointer-events-none z-[-1]"></div>
     <!-- Animated Glow Background -->
@@ -4272,6 +4272,7 @@
 <script>
     /* ─── CHATBOT WIDGET LOGIC ─── */
     let isChatOpen = false;
+    let activeGateway = null; // Cấu hình OmniRoute / 9Router
     const chatbotWindow = document.getElementById('chatbot-window');
     const chatbotMessages = document.getElementById('chatbot-messages');
     const chatbotInput = document.getElementById('chatbot-input');
@@ -4284,6 +4285,32 @@
       } else {
         chatbotWindow.classList.add('opacity-0', 'pointer-events-none', 'translate-y-8');
       }
+    }
+
+    // Tự động kiểm tra Local Gateway & Tự động bật chatbot sau khi trang load xong 1.5 giây
+    window.addEventListener('DOMContentLoaded', async () => {
+      activeGateway = await detectGateway();
+      if (activeGateway) {
+        console.log(`[AI GATEWAY] Connected to local ${activeGateway.name} on port ${activeGateway.port}`);
+      }
+      setTimeout(() => {
+        if (!isChatOpen) {
+          toggleChatbot();
+        }
+      }, 1500);
+    });
+
+    async function detectGateway() {
+      const ports = [20128, 9090]; // 20128: OmniRoute, 9090: 9Router
+      for (let port of ports) {
+        try {
+          const res = await fetch(`http://127.0.0.1:${port}/v1/models`, { method: 'GET' });
+          if (res.ok) {
+            return { port, name: port === 20128 ? 'OmniRoute' : '9Router' };
+          }
+        } catch (e) {}
+      }
+      return null;
     }
 
     function appendMessage(text, sender) {
@@ -4339,25 +4366,63 @@
 
       const typingId = appendTypingIndicator();
       
-      // Simulate API delay
-      await new Promise(r => setTimeout(r, 1000 + Math.random() * 1500));
-      removeTypingIndicator(typingId);
+      try {
+        let url = 'https://text.pollinations.ai/';
+        let bodyObj = {
+          messages: [
+            { 
+              role: 'system', 
+              content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack trình độ Giáo sư/Tiến sĩ. 
+Hãy xưng hô là "Triều Hí" hoặc "team" và gọi người dùng là "sếp". Trả lời ngắn gọn (1-3 câu), lịch sự, chuyên nghiệp bằng tiếng Việt.
+Hỗ trợ giải đáp các thắc mắc về năng lực của anh Võ Hữu Trí (Web developer chuyên nghiệp, Fullstack, bảo mật, hệ thống tự động hóa).` 
+            },
+            { role: 'user', content: text }
+          ]
+        };
 
-      // Simple mock logic matching CLI
-      const lowerText = text.toLowerCase();
-      let reply = "Dạ sếp, team đã ghi nhận yêu cầu. Đang tiến hành phân tích mã nguồn...";
-      if (lowerText.includes("team") || lowerText.includes("member")) {
-        reply = "<b>10-Member Elite Fleet:</b><br/>- Prof. System Architecture<br/>- Prof. Backend<br/>- Prof. AI<br/>- Dr. Frontend...<br/>*(Hệ thống sẵn sàng 100%)*";
-      } else if (lowerText.includes("html anything") || lowerText.includes("giao diện")) {
-        reply = "Dr. Frontend đã kích hoạt <code>nexu-io/html-anything</code>. Giao diện chuẩn bị được render tự động không cần API key!";
-      } else if (lowerText.includes("deploy") || lowerText.includes("hosting")) {
-        reply = "Prof. DevOps đang chuẩn bị CI/CD lên Vercel và cấu hình Database bằng Supabase (Zero-cost infrastructure).";
+        if (activeGateway) {
+          url = `http://127.0.0.1:${activeGateway.port}/v1/chat/completions`;
+          bodyObj.model = 'gpt-4o'; // Hoặc model mặc định cấu hình trên local gateway
+        }
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bodyObj)
+        });
+        
+        removeTypingIndicator(typingId);
+        
+        if (response.ok) {
+          let replyText = "";
+          if (activeGateway) {
+            const parsed = await response.json();
+            replyText = parsed.choices[0].message.content.trim();
+          } else {
+            replyText = await response.text();
+          }
+          appendMessage(replyText, 'bot');
+        } else {
+          throw new Error('API Error');
+        }
+      } catch (error) {
+        // Fallback về mock offline logic
+        removeTypingIndicator(typingId);
+        const lowerText = text.toLowerCase();
+        let reply = "Dạ sếp, team đã ghi nhận yêu cầu. Đang tiến hành phân tích mã nguồn...";
+        if (lowerText.includes("team") || lowerText.includes("member")) {
+          reply = "<b>10-Member Elite Fleet:</b><br/>- Prof. System Architecture<br/>- Prof. Backend<br/>- Prof. AI<br/>- Dr. Frontend...<br/>*(Hệ thống sẵn sàng 100%)*";
+        } else if (lowerText.includes("html anything") || lowerText.includes("giao diện")) {
+          reply = "Dr. Frontend đã kích hoạt <code>nexu-io/html-anything</code>. Giao diện chuẩn bị được render tự động không cần API key!";
+        } else if (lowerText.includes("deploy") || lowerText.includes("hosting")) {
+          reply = "Prof. DevOps đang chuẩn bị CI/CD lên Vercel và cấu hình Database bằng Supabase (Zero-cost infrastructure).";
+        }
+        
+        appendMessage(reply, 'bot');
       }
-
-      appendMessage(reply, 'bot');
     }
   </script>
-</body>
-</script>
 </body>
 </html>

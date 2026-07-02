@@ -80,14 +80,15 @@ async function typeWriter(text, speed = 10) {
 }
 
 const availableModels = [
-    { id: 1, name: "Claude 3.5 Sonnet (Agentic Core)", icon: "🟣" },
-    { id: 2, name: "GPT-4o (OpenAI Omni)", icon: "🟢" },
-    { id: 3, name: "Gemini 1.5 Pro (Google)", icon: "🔵" },
-    { id: 4, name: "Llama 3 70B (Meta)", icon: "🦙" },
-    { id: 5, name: "Mistral Large (Mistral AI)", icon: "🌪️" },
-    { id: 6, name: "Claude 3 Opus (Anthropic)", icon: "💎" }
+    { id: 1, name: "Claude 3.5 Sonnet (Agentic Core)", icon: "🟣", value: "claude-3-5-sonnet" },
+    { id: 2, name: "GPT-4o (OpenAI Omni)", icon: "🟢", value: "gpt-4o" },
+    { id: 3, name: "Gemini 1.5 Pro (Google)", icon: "🔵", value: "gemini-1.5-pro" },
+    { id: 4, name: "Llama 3 70B (Meta)", icon: "🦙", value: "llama-3-70b" },
+    { id: 5, name: "Mistral Large (Mistral AI)", icon: "🌪️", value: "mistral-large" },
+    { id: 6, name: "Claude 3 Opus (Anthropic)", icon: "💎", value: "claude-3-opus" }
 ];
 let currentModel = availableModels[0];
+let activeGateway = null; // Tự động phát hiện OmniRoute/9Router
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -98,6 +99,33 @@ function updatePrompt() {
     rl.setPrompt(`${colors.fg.magenta}╭─[${colors.fg.cyan}HuuTri@Workspace${colors.fg.magenta}]─[${colors.fg.yellow}${currentModel.icon} ${currentModel.name}${colors.fg.magenta}]\n╰─❯ ${colors.reset}`);
 }
 updatePrompt();
+
+async function detectGateway() {
+    const http = require('http');
+    const ports = [20128, 9090]; // 20128: OmniRoute, 9090: 9Router
+    for (let port of ports) {
+        try {
+            const status = await new Promise((resolve) => {
+                const req = http.request({
+                    hostname: '127.0.0.1',
+                    port: port,
+                    path: '/v1/models',
+                    method: 'GET',
+                    timeout: 300
+                }, (res) => {
+                    resolve(res.statusCode === 200);
+                });
+                req.on('error', () => resolve(false));
+                req.on('timeout', () => { req.destroy(); resolve(false); });
+                req.end();
+            });
+            if (status) {
+                return { port, name: port === 20128 ? 'OmniRoute' : '9Router' };
+            }
+        } catch (e) {}
+    }
+    return null;
+}
 
 async function bootSequence() {
     console.clear();
@@ -183,6 +211,15 @@ async function bootSequence() {
 
     await showSpinner("Syncing Codex & Claude Skills Library (SkillsMP)...", 400);
     console.log(`${colors.fg.green}✔ Ready to run In-Browser AI & 100% IDE Automation.${colors.reset}\n`);
+
+    // Tự động kiểm tra và cấu hình Gateway OmniRoute & 9Router
+    activeGateway = await detectGateway();
+    if (activeGateway) {
+        console.log(`${colors.fg.green}⚡ [AI GATEWAY] Phát hiện ${activeGateway.name} đang hoạt động tại cổng ${activeGateway.port}.${colors.reset}`);
+        console.log(`${colors.fg.green}   Tự động định tuyến request để tối ưu hóa Token và bypass Rate Limit!${colors.reset}\n`);
+    } else {
+        console.log(`${colors.dim}ℹ [AI GATEWAY] Không phát hiện Local Gateway (OmniRoute/9Router). Sử dụng Cloud Fallback API.${colors.reset}\n`);
+    }
 
     const totalMem = (os.totalmem() / 1024 / 1024 / 1024).toFixed(1);
     const freeMem = (os.freemem() / 1024 / 1024 / 1024).toFixed(1);
@@ -433,61 +470,94 @@ Hệ thống đã bắn tín hiệu để mở GUI quản trị ở cửa sổ m
     // Default
     else {
         return new Promise((resolve) => {
-            // Sếp yêu cầu tự động tích hợp Claude Code. Team sẽ gọi trực tiếp process Claude Code của sếp trên máy!
-            const { exec } = require('child_process');
-            
-            // Xử lý chuỗi input để tránh lỗi ký tự đặc biệt trong Terminal Windows
-            const safeInput = userInput.replace(/"/g, '\\"').replace(/\n/g, ' ');
-            
-            // Thử gọi Claude Code CLI (mà sếp đã bật)
-            exec(`npx -y @anthropic-ai/claude-code -p "${safeInput}"`, (error, stdout, stderr) => {
-                if (!error && stdout.trim().length > 0) {
-                    // Xóa các dòng rác của CLI (như Warning, logs) để lấy câu trả lời
-                    const lines = stdout.split('\n').filter(line => !line.includes('Warning:') && !line.includes('Not logged in'));
-                    resolve(lines.join('\n').trim() || stdout.trim());
-                } else {
-                    // Nếu Claude Code chưa sẵn sàng (chưa login hoặc lỗi), Fallback sang Free AI API (Pollinations)
-                    // Đây là cách "Tự động lấy API" mượt mà nhất để sếp luôn có phản hồi ngay lập tức!
-                    // Đọc nhanh danh sách Skill để nhúng vào System Prompt cho AI nhận diện
-                    let dynamicSkillsInfo = "Hệ thống chưa có skill custom.";
-                    try {
-                        const skillsDir = require('path').join(process.cwd(), '.agents', 'skills');
-                        if (require('fs').existsSync(skillsDir)) {
-                            const skillsList = require('fs').readdirSync(skillsDir)
-                                .filter(file => require('fs').statSync(require('path').join(skillsDir, file)).isDirectory());
-                            if (skillsList.length > 0) dynamicSkillsInfo = `Bạn đã hấp thụ các kỹ năng (Skills): ${skillsList.join(', ')}.`;
+            // Nếu phát hiện thấy Local AI Gateway (OmniRoute / 9Router), định tuyến API qua đó
+            if (activeGateway) {
+                const http = require('http');
+                const data = JSON.stringify({
+                    model: currentModel.value,
+                    messages: [
+                        { 
+                            role: 'system', 
+                            content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack trình độ Giáo sư/Tiến sĩ. 
+Hãy xưng hô là "Triều Hí" hoặc "team" và gọi người dùng là "sếp". Trả lời chuyên nghiệp, tự tin bằng tiếng Việt.` 
+                        },
+                        { role: 'user', content: userInput }
+                    ]
+                });
+
+                const req = http.request({
+                    hostname: '127.0.0.1',
+                    port: activeGateway.port,
+                    path: '/v1/chat/completions',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': Buffer.byteLength(data)
+                    }
+                }, (res) => {
+                    let body = '';
+                    res.on('data', (chunk) => body += chunk);
+                    res.on('end', () => {
+                        try {
+                            const parsed = JSON.parse(body);
+                            if (parsed.choices && parsed.choices[0] && parsed.choices[0].message) {
+                                resolve(parsed.choices[0].message.content.trim());
+                            } else {
+                                resolve(`Lỗi format phản hồi từ ${activeGateway.name}. Vui lòng kiểm tra API key trong Gateway.`);
+                            }
+                        } catch (e) {
+                            resolve(`Không thể parse kết quả từ ${activeGateway.name}.`);
                         }
-                    } catch(e) {}
-
-                    const data = JSON.stringify({
-                        messages: [
-                            { role: 'system', content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack trình độ Giáo sư/Tiến sĩ. Hãy gọi người dùng là "sếp" và trả lời bằng tiếng Việt chuyên nghiệp, tự tin. ${dynamicSkillsInfo} Hãy bám sát vào những skill này để tư vấn hoặc triển khai giải pháp cho sếp.` },
-                            { role: 'user', content: userInput }
-                        ]
                     });
+                });
 
-                    const options = {
-                        hostname: 'text.pollinations.ai',
-                        port: 443,
-                        path: '/',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Content-Length': Buffer.byteLength(data)
-                        }
-                    };
+                req.on('error', (e) => {
+                    resolve(`Lỗi kết nối tới ${activeGateway.name}: ${e.message}`);
+                });
 
-                    const req = require('https').request(options, (res) => {
-                        let body = '';
-                        res.on('data', (chunk) => body += chunk);
-                        res.on('end', () => resolve(body.trim() || "Không có phản hồi từ AI."));
-                    });
+                req.write(data);
+                req.end();
+                return;
+            }
 
-                    req.on('error', (e) => resolve(`Hệ thống gặp lỗi kết nối AI: ${e.message}`));
-                    req.write(data);
-                    req.end();
+            // Fallback sang Free AI API (Pollinations)
+            let dynamicSkillsInfo = "Hệ thống chưa có skill custom.";
+            try {
+                const skillsDir = require('path').join(process.cwd(), '.agents', 'skills');
+                if (require('fs').existsSync(skillsDir)) {
+                    const skillsList = require('fs').readdirSync(skillsDir)
+                        .filter(file => require('fs').statSync(require('path').join(skillsDir, file)).isDirectory());
+                    if (skillsList.length > 0) dynamicSkillsInfo = `Bạn đã hấp thụ các kỹ năng (Skills): ${skillsList.join(', ')}.`;
                 }
+            } catch(e) {}
+
+            const data = JSON.stringify({
+                messages: [
+                    { role: 'system', content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack trình độ Giáo sư/Tiến sĩ. Hãy gọi người dùng là "sếp" và trả lời bằng tiếng Việt chuyên nghiệp, tự tin. ${dynamicSkillsInfo} Hãy bám sát vào những skill này để tư vấn hoặc triển khai giải pháp cho sếp.` },
+                    { role: 'user', content: userInput }
+                ]
             });
+
+            const options = {
+                hostname: 'text.pollinations.ai',
+                port: 443,
+                path: '/',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(data)
+                }
+            };
+
+            const req = require('https').request(options, (res) => {
+                let body = '';
+                res.on('data', (chunk) => body += chunk);
+                res.on('end', () => resolve(body.trim() || "Không có phản hồi từ AI."));
+            });
+
+            req.on('error', (e) => resolve(`Hệ thống gặp lỗi kết nối AI: ${e.message}`));
+            req.write(data);
+            req.end();
         });
     }
 }
