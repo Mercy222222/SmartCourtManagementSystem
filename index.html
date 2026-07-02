@@ -2601,28 +2601,56 @@
       submitBtn.disabled = true;
       submitBtn.textContent = t('contact.sending');
 
-      setTimeout(() => {
-        // Bắn pháo hoa Confetti chúc mừng
-        confetti({
-          particleCount: 150,
-          spread: 80,
-          origin: { y: 0.6 }
-        });
+      // Gửi dữ liệu thật bằng FormSubmit API (Gửi thẳng email về cho sếp)
+      fetch("https://formsubmit.co/ajax/huutri.user@gmail.com", {
+          method: "POST",
+          headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+              Tên: name,
+              Email: email,
+              Số_Điện_Thoại: phone,
+              Tin_Nhắn: message,
+              _subject: "🚀 TIN NHẮN LIÊN HỆ MỚI TỪ PORTFOLIO!"
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+          // Bắn pháo hoa Confetti chúc mừng
+          confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.6 }
+          });
 
-        // Báo thành công bằng SweetAlert2
-        Swal.fire({
-          title: '🎉 Send Success!',
-          text: t('contact.successMessage'),
-          icon: 'success',
-          background: currentTheme === 'dark' ? 'rgba(24, 24, 24, 0.95)' : '#ffffff',
-          color: currentTheme === 'dark' ? '#f5f5f5' : '#222222',
-          confirmButtonColor: '#007bff'
-        });
+          // Báo thành công bằng SweetAlert2
+          Swal.fire({
+            title: '🎉 Send Success!',
+            text: t('contact.successMessage'),
+            icon: 'success',
+            background: currentTheme === 'dark' ? 'rgba(24, 24, 24, 0.95)' : '#ffffff',
+            color: currentTheme === 'dark' ? '#f5f5f5' : '#222222',
+            confirmButtonColor: '#007bff'
+          });
 
-        form.reset();
-        submitBtn.disabled = false;
-        submitBtn.textContent = t('contact.send');
-      }, 1500);
+          form.reset();
+      })
+      .catch(error => {
+          Swal.fire({
+            title: 'Oops!',
+            text: t('contact.errorMessage') || "Không thể gửi tin nhắn. Vui lòng thử lại sau.",
+            icon: 'error',
+            background: currentTheme === 'dark' ? 'rgba(24, 24, 24, 0.95)' : '#ffffff',
+            color: currentTheme === 'dark' ? '#f5f5f5' : '#222222',
+            confirmButtonColor: '#007bff'
+          });
+      })
+      .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = t('contact.send');
+      });
     }
 
     /* ─── SCROLL REVEAL ANIMATIONS (INTERSECTION OBSERVER) ─── */
