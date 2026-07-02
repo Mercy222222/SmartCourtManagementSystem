@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\tests\\LangXiMi.Tests\\LangXiMi.Tests.csproj": {}
+    "/Users/ngocanh/webbanhang/tests/LangXiMi.Tests/LangXiMi.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\LangXiMi\\LangXiMi.csproj": {
+    "/Users/ngocanh/webbanhang/LangXiMi/LangXiMi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\LangXiMi\\LangXiMi.csproj",
+        "projectUniqueName": "/Users/ngocanh/webbanhang/LangXiMi/LangXiMi.csproj",
         "projectName": "LangXiMi",
-        "projectPath": "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\LangXiMi\\LangXiMi.csproj",
-        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\LangXiMi\\obj\\",
+        "projectPath": "/Users/ngocanh/webbanhang/LangXiMi/LangXiMi.csproj",
+        "packagesPath": "/Users/ngocanh/.nuget/packages/",
+        "outputPath": "/Users/ngocanh/webbanhang/LangXiMi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/ngocanh/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -90,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\ASUS\\AppData\\Local\\Microsoft\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/Users/ngocanh/.dotnet/sdk/10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -508,17 +508,17 @@
         }
       }
     },
-    "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\tests\\LangXiMi.Tests\\LangXiMi.Tests.csproj": {
+    "/Users/ngocanh/webbanhang/tests/LangXiMi.Tests/LangXiMi.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\tests\\LangXiMi.Tests\\LangXiMi.Tests.csproj",
+        "projectUniqueName": "/Users/ngocanh/webbanhang/tests/LangXiMi.Tests/LangXiMi.Tests.csproj",
         "projectName": "LangXiMi.Tests",
-        "projectPath": "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\tests\\LangXiMi.Tests\\LangXiMi.Tests.csproj",
-        "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\tests\\LangXiMi.Tests\\obj\\",
+        "projectPath": "/Users/ngocanh/webbanhang/tests/LangXiMi.Tests/LangXiMi.Tests.csproj",
+        "packagesPath": "/Users/ngocanh/.nuget/packages/",
+        "outputPath": "/Users/ngocanh/webbanhang/tests/LangXiMi.Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/ngocanh/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -531,8 +531,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\LangXiMi\\LangXiMi.csproj": {
-                "projectPath": "C:\\Users\\ASUS\\.gemini\\antigravity\\scratch\\webbanhang\\LangXiMi\\LangXiMi.csproj"
+              "/Users/ngocanh/webbanhang/LangXiMi/LangXiMi.csproj": {
+                "projectPath": "/Users/ngocanh/webbanhang/LangXiMi/LangXiMi.csproj"
               }
             }
           }
@@ -599,7 +599,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\ASUS\\AppData\\Local\\Microsoft\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/Users/ngocanh/.dotnet/sdk/10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

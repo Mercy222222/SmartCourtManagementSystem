@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LangXiMi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2b2c9ee7c9e08357ba1f60fc07ee79603b72982d")]
 [assembly: System.Reflection.AssemblyProductAttribute("LangXiMi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LangXiMi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

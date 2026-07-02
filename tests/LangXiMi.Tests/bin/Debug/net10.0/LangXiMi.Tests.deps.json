@@ -1008,6 +1008,16 @@
           "lib/net6.0/SQLitePCLRaw.provider.e_sqlite3.dll": {}
         }
       },
+      "System.Diagnostics.EventLog/10.0.9": {
+        "runtimeTargets": {
+          "runtimes/win/lib/net10.0/System.Diagnostics.EventLog.Messages.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.926.27113"
+          }
+        }
+      },
       "xunit/2.9.3": {
         "dependencies": {
           "xunit.analyzers": "1.18.0",
@@ -1019,7 +1029,7 @@
         "runtime": {
           "lib/netstandard2.0/xunit.abstractions.dll": {
             "assemblyVersion": "2.0.0.0",
-            "fileVersion": "2.0.0.0"
+            "fileVersion": "0.0.0.0"
           }
         },
         "compile": {
@@ -3208,9 +3218,6 @@
       "Microsoft.Extensions.Primitives/10.0.9": {
         "compileOnly": true
       },
-      "System.Diagnostics.EventLog/10.0.9": {
-        "compileOnly": true
-      },
       "xunit.analyzers/1.18.0": {
         "compileOnly": true
       },
@@ -3385,6 +3392,13 @@
       "sha512": "sha512-Y/0ZkR+r0Cg3DQFuCl1RBnv/tmxpIZRU3HUvelPw6MVaKHwYYR8YNvgs0vuNuXCMvlyJ+Fh88U1D4tah1tt6qw==",
       "path": "sqlitepclraw.provider.e_sqlite3/2.1.11",
       "hashPath": "sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512"
+    },
+    "System.Diagnostics.EventLog/10.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-s2PcxHK4IYQ6gmD3VSBkym9tWGkFisKjcjWBdl7a+n4Yy66ae4beJ1ZdjDp060SSll4W3Rt4H2LW87dWckv+QQ==",
+      "path": "system.diagnostics.eventlog/10.0.9",
+      "hashPath": "system.diagnostics.eventlog.10.0.9.nupkg.sha512"
     },
     "xunit/2.9.3": {
       "type": "package",
@@ -5219,13 +5233,6 @@
       "sha512": "sha512-fmEbAUFsaIKirgLt/lYhuFRBwhcSJN31jjHgCdbQxJiWOum6EdLjkbgGuukSP9z/a+9LibaxII/kF+GwOXgC4g==",
       "path": "microsoft.extensions.primitives/10.0.9",
       "hashPath": "microsoft.extensions.primitives.10.0.9.nupkg.sha512"
-    },
-    "System.Diagnostics.EventLog/10.0.9": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-s2PcxHK4IYQ6gmD3VSBkym9tWGkFisKjcjWBdl7a+n4Yy66ae4beJ1ZdjDp060SSll4W3Rt4H2LW87dWckv+QQ==",
-      "path": "system.diagnostics.eventlog/10.0.9",
-      "hashPath": "system.diagnostics.eventlog.10.0.9.nupkg.sha512"
     },
     "xunit.analyzers/1.18.0": {
       "type": "package",

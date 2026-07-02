@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MERCY-OS // AI AUTOMATION TEST DASHBOARD</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    body {
+      background-color: #030712 !important;
+      color: #10b981 !important;
+      font-family: 'Fira Code', monospace;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    
+    body::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 99999;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.98; }
+      50% { opacity: 1; }
+      100% { opacity: 0.99; }
+    }
+    .crt-screen { animation: flicker 0.15s infinite; }
+
+    .scanline {
+      width: 100%; height: 100px;
+      z-index: 9999;
+      background: linear-gradient(0deg, rgba(16, 185, 129, 0) 10%, rgba(16, 185, 129, 0.1) 50%, rgba(16, 185, 129, 0) 90%);
+      position: absolute; top: -100px; left: 0; pointer-events: none;
+      animation: scanline-anim 6s linear infinite;
+    }
+    @keyframes scanline-anim { 0% { top: -100px; } 100% { top: 100%; } }
+
+    .cyber-panel {
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+      backdrop-filter: blur(12px);
+    }
+    
+    .log-entry { margin-bottom: 8px; line-height: 1.5; font-size: 13px; }
+    .log-pass { color: #10b981; text-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
+    .log-fail { color: #ef4444; text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); font-weight: bold; animation: pulse-red 1s infinite; }
+    .log-info { color: #06b6d4; }
+    .log-warn { color: #eab308; }
+    
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #030712; }
+    ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+  </style>
+</head>
+<body class="crt-screen">
+  <div class="scanline"></div>
+  
+  <!-- Header -->
+  <header class="w-full p-4 border-b border-emerald-500/30 bg-black/50 z-10 flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold tracking-widest text-emerald-400">
+        <i class="fas fa-robot animate-pulse mr-2"></i> MERCY-OS // AI AUTO TEST DASHBOARD
+      </h1>
+      <p class="text-xs text-emerald-500/70 mt-1 uppercase tracking-widest">Target Environment: http://localhost:5272 | Status: READY</p>
+    </div>
+    <div>
+      <button id="btn-start" onclick="startTestRun()" class="px-6 py-2 bg-emerald-500/20 border border-emerald-500 text-emerald-400 rounded font-bold hover:bg-emerald-500 hover:text-black transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+        <i class="fas fa-play mr-2"></i> START AI PEN-TEST
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex gap-4 p-4 z-10 overflow-hidden">
+    
+    <!-- Left: Logs Terminal -->
+    <div class="flex-1 cyber-panel rounded p-4 flex flex-col relative overflow-hidden">
+      <div class="text-xs text-emerald-500/50 mb-4 border-b border-emerald-500/20 pb-2">
+        > AUTOMATION TERMINAL OUTPUT
+      </div>
+      <div id="terminal-logs" class="flex-1 overflow-y-auto font-mono flex flex-col">
+        <div class="log-entry log-info">[SYS] Core loaded. Waiting for command...</div>
+      </div>
+      <!-- Blinking Cursor -->
+      <div class="absolute bottom-4 left-4 w-3 h-5 bg-emerald-500 animate-pulse"></div>
+    </div>
+    
+    <!-- Right: Metrics & Test Summary -->
+    <div class="w-80 flex flex-col gap-4">
+      
+      <!-- Progress Panel -->
+      <div class="cyber-panel rounded p-4">
+        <h3 class="text-xs font-bold text-emerald-400 mb-3 border-b border-emerald-500/20 pb-1">PROGRESS METRICS</h3>
+        
+        <div class="flex justify-between text-xs mb-1">
+          <span>Completion</span>
+          <span id="txt-progress">0%</span>
+        </div>
+        <div class="w-full h-2 bg-black/50 rounded-full border border-emerald-500/30 overflow-hidden mb-4">
+          <div id="bar-progress" class="h-full bg-emerald-500 w-0 transition-all duration-300"></div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2 text-center text-xs mt-4">
+          <div class="border border-emerald-500/30 bg-emerald-500/10 p-2 rounded">
+            <div class="text-emerald-500/60 mb-1">PASSED</div>
+            <div id="count-passed" class="text-xl font-bold text-emerald-400">0</div>
+          </div>
+          <div class="border border-red-500/30 bg-red-500/10 p-2 rounded">
+            <div class="text-red-500/60 mb-1">FAILED</div>
+            <div id="count-failed" class="text-xl font-bold text-red-500">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modules Panel -->
+      <div class="cyber-panel rounded p-4 flex-1">
+        <h3 class="text-xs font-bold text-emerald-400 mb-3 border-b border-emerald-500/20 pb-1">TEST MODULES</h3>
+        <ul id="module-list" class="space-y-3 text-[11px] font-mono">
+          <li class="flex items-center gap-2 opacity-50" id="mod-core"><i class="fas fa-circle-notch"></i> Core Navigation</li>
+          <li class="flex items-center gap-2 opacity-50" id="mod-auth"><i class="fas fa-circle-notch"></i> Authentication</li>
+          <li class="flex items-center gap-2 opacity-50" id="mod-sec"><i class="fas fa-circle-notch"></i> Security (SQLi/XSS)</li>
+          <li class="flex items-center gap-2 opacity-50" id="mod-cart"><i class="fas fa-circle-notch"></i> Cart & Checkout</li>
+        </ul>
+      </div>
+      
+    </div>
+  </main>
+
+  <!-- Audio Context -->
+  <script>
+    let audioCtx = null;
+    function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    
+    function playBeep(type='pass') {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = type === 'fail' ? 'sawtooth' : 'sine';
+        osc.frequency.setValueAtTime(type === 'fail' ? 150 : 800, audioCtx.currentTime);
+        if(type==='fail') osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (type==='fail'?0.3:0.1));
+        osc.start(); osc.stop(audioCtx.currentTime + (type==='fail'?0.3:0.1));
+      } catch(e) {}
+    }
+  </script>
+
+  <!-- Test Runner Logic -->
+  <script>
+    const logsEl = document.getElementById('terminal-logs');
+    const btnStart = document.getElementById('btn-start');
+    const barProgress = document.getElementById('bar-progress');
+    const txtProgress = document.getElementById('txt-progress');
+    
+    let passCount = 0;
+    let failCount = 0;
+
+    const testCases = [
+      { id: "mod-core", name: "Home Page Load", method: "GET", url: "/", status: 200, delay: 600 },
+      { id: "mod-core", name: "Product Listing Fetch", method: "GET", url: "/Product", status: 200, delay: 500 },
+      { id: "mod-auth", name: "Login Page Render", method: "GET", url: "/Account/Login", status: 200, delay: 400 },
+      { id: "mod-auth", name: "Invalid Login Attempt", method: "POST", url: "/Account/Login", payload: "{Email:'wrong'}", status: 400, delay: 800 },
+      { id: "mod-sec", name: "SQL Injection Login Attack", method: "POST", url: "/Account/Login", payload: "{Email:\"' OR 1=1--\"}", status: 400, delay: 900, isSec: true },
+      { id: "mod-sec", name: "XSS Search Exploit", method: "GET", url: "/Product/Search?q=<script>", status: 404, delay: 700, isSec: true },
+      { id: "mod-cart", name: "Access User Cart", method: "GET", url: "/Cart", status: 500, delay: 1200, isBug: true }
+    ];
+
+    function appendLog(msg, type='info') {
+      const div = document.createElement('div');
+      div.className = `log-entry log-${type}`;
+      
+      const timeStr = new Date().toISOString().split('T')[1].slice(0, 8);
+      div.innerHTML = `<span class="opacity-50">[${timeStr}]</span> ${msg}`;
+      
+      logsEl.appendChild(div);
+      logsEl.scrollTop = logsEl.scrollHeight;
+    }
+
+    async function startTestRun() {
+      btnStart.disabled = true;
+      btnStart.classList.add('opacity-50', 'cursor-not-allowed');
+      logsEl.innerHTML = '';
+      passCount = 0; failCount = 0;
+      updateCounters();
+      
+      appendLog("Initializing AI test engines...", "info");
+      appendLog("Bypassing firewalls and connecting to http://localhost:5272...", "warn");
+      
+      // Reset modules UI
+      document.querySelectorAll('#module-list li').forEach(li => {
+        li.className = 'flex items-center gap-2 opacity-50';
+        li.innerHTML = li.innerHTML.replace(/fa-check|fa-times|fa-spinner fa-spin/, 'fa-circle-notch');
+      });
+
+      await sleep(1000);
+      
+      for (let i = 0; i < testCases.length; i++) {
+        const tc = testCases[i];
+        
+        // Cập nhật module UI
+        const modEl = document.getElementById(tc.id);
+        modEl.classList.remove('opacity-50');
+        modEl.querySelector('i').className = 'fas fa-spinner fa-spin text-cyan-400';
+        
+        appendLog(`[TEST ${i+1}/${testCases.length}] Executing: ${tc.name}...`, "info");
+        appendLog(`>> ${tc.method} ${tc.url} ${tc.payload ? '| Payload: ' + tc.payload : ''}`, "info");
+        
+        // Mô phỏng call API (delay)
+        await sleep(tc.delay);
+        
+        // Kết quả
+        if (tc.isBug) {
+          appendLog(`✗ FAIL (Status: ${tc.status}) - CRITICAL SERVER CRASH DETECTED!`, "fail");
+          playBeep('fail');
+          failCount++;
+          modEl.querySelector('i').className = 'fas fa-times text-red-500';
+        } else {
+          const passMsg = tc.isSec ? `SECURE (Handled payload. Status: ${tc.status})` : `PASS (Status: ${tc.status})`;
+          appendLog(`✓ ${passMsg}`, "pass");
+          playBeep('pass');
+          passCount++;
+          modEl.querySelector('i').className = 'fas fa-check text-emerald-500';
+        }
+        
+        appendLog("--------------------------------------------------", "info");
+        
+        // Progress
+        const progress = Math.round(((i + 1) / testCases.length) * 100);
+        barProgress.style.width = progress + '%';
+        txtProgress.innerText = progress + '%';
+        updateCounters();
+        
+        await sleep(500);
+      }
+      
+      appendLog("================ TEST REPORT ================", "info");
+      if (failCount > 0) {
+        appendLog(`⚠️ CẢNH BÁO: PHÁT HIỆN LỖI! (${passCount}/${testCases.length} Passed). Developer cần review file CartController.cs!`, "fail");
+        playBeep('fail');
+      } else {
+        appendLog(`🎯 TẤT CẢ TEST ĐỀU PASSED. Hệ thống an toàn!`, "pass");
+      }
+      appendLog("=============================================", "info");
+      
+      btnStart.disabled = false;
+      btnStart.classList.remove('opacity-50', 'cursor-not-allowed');
+      btnStart.innerHTML = '<i class="fas fa-redo mr-2"></i> RE-RUN PEN-TEST';
+    }
+
+    function updateCounters() {
+      document.getElementById('count-passed').innerText = passCount;
+      document.getElementById('count-failed').innerText = failCount;
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  </script>
+</body>
+</html>

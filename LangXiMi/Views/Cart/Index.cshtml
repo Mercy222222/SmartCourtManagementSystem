@@ -1,0 +1,88 @@
+@model IEnumerable<LangXiMi.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ Hàng Của Bạn";
+}
+
+<div class="container py-5">
+    <h2 class="mb-4">🛒 Giỏ hàng của bạn</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Tổng cộng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="row-@item.ProductId">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" style="width: 50px; height: 50px; object-fit: cover;" class="rounded me-3" />
+                                    <span>@item.ProductName</span>
+                                </div>
+                            </td>
+                            <td>@item.Price.ToString("N0") VNĐ</td>
+                            <td>
+                                <input type="number" class="form-control" style="width: 80px;" value="@item.Quantity" min="1" 
+                                       onchange="updateQuantity(@item.ProductId, this.value)" />
+                            </td>
+                            <td class="text-danger fw-bold" id="line-total-@item.ProductId">@item.LineTotal.ToString("N0") VNĐ</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger" onclick="removeItem(@item.ProductId)">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-end align-items-center mt-3">
+            <h4 class="me-4">Tổng Thanh Toán: <span id="grand-total" class="text-danger fw-bold">@Model.Sum(c => c.LineTotal).ToString("N0")</span> VNĐ</h4>
+            <a href="/Order/Checkout" class="btn btn-primary btn-lg">Tiến Hành Đặt Hàng <i class="bi bi-arrow-right"></i></a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center py-5">
+            <h4><i class="bi bi-cart-x"></i> Giỏ hàng đang trống!</h4>
+            <p>Vui lòng quay lại cửa hàng để chọn những chiếc bánh Làng Xì Mi ngon nhất.</p>
+            <a href="/Product" class="btn btn-success mt-3">Tiếp tục mua sắm</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function updateQuantity(id, qty) {
+            $.post('/Cart/UpdateQuantity', { productId: id, quantity: qty }, function (res) {
+                if (res.success) {
+                    $('#line-total-' + id).text(res.lineTotal.toLocaleString('vi-VN') + ' VNĐ');
+                    $('#grand-total').text(res.grandTotal.toLocaleString('vi-VN'));
+                }
+            });
+        }
+
+        function removeItem(id) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+                $.post('/Cart/RemoveItem', { productId: id }, function (res) {
+                    if (res.success) {
+                        $('#row-' + id).remove();
+                        $('#grand-total').text(res.grandTotal.toLocaleString('vi-VN'));
+                        if (res.cartCount === 0) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}
