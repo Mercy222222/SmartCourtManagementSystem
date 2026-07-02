@@ -29,7 +29,7 @@
                                     <span>@item.ProductName</span>
                                 </div>
                             </td>
-                            <td>@item.Price.ToString("N0") VNĐ</td>
+                            <td>@item.UnitPrice.ToString("N0") VNĐ</td>
                             <td>
                                 <input type="number" class="form-control" style="width: 80px;" value="@item.Quantity" min="1" 
                                        onchange="updateQuantity(@item.ProductId, this.value)" />

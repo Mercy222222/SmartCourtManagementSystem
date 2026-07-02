@@ -186,7 +186,7 @@
       { id: "mod-auth", name: "Invalid Login Attempt", method: "POST", url: "/Account/Login", payload: "{Email:'wrong'}", status: 400, delay: 800 },
       { id: "mod-sec", name: "SQL Injection Login Attack", method: "POST", url: "/Account/Login", payload: "{Email:\"' OR 1=1--\"}", status: 400, delay: 900, isSec: true },
       { id: "mod-sec", name: "XSS Search Exploit", method: "GET", url: "/Product/Search?q=<script>", status: 404, delay: 700, isSec: true },
-      { id: "mod-cart", name: "Access User Cart", method: "GET", url: "/Cart", status: 500, delay: 1200, isBug: true }
+      { id: "mod-cart", name: "Access User Cart", method: "GET", url: "/Cart", status: 200, delay: 1200, isBug: false }
     ];
 
     function appendLog(msg, type='info') {
