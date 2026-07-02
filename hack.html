@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MERCY-OS // EXPLOIT CONTROL PANEL</title>
+  <meta name="description" content="Trang giả lập bảng điều khiển mã độc và tấn công an ninh mạng Mercy-OS." />
+  
+  <!-- CDNs cho Fonts, Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <!-- GSAP & Canvas Confetti -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+
+  <style>
+    /* ─── CRT MONITOR GLASS EFFECTS ─── */
+    body {
+      background-color: #030712 !important;
+      color: #10b981 !important;
+      font-family: 'Fira Code', monospace;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* CRT Scanline effect */
+    body::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 99999;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
+
+    /* Screen flicker animation */
+    @keyframes flicker {
+      0% { opacity: 0.98; }
+      50% { opacity: 1; }
+      100% { opacity: 0.99; }
+    }
+    .crt-screen {
+      animation: flicker 0.15s infinite;
+    }
+
+    /* Scanline glow indicator */
+    .scanline {
+      width: 100%;
+      height: 100px;
+      z-index: 9999;
+      background: linear-gradient(
+        0deg,
+        rgba(16, 185, 129, 0) 10%,
+        rgba(16, 185, 129, 0.08) 50%,
+        rgba(16, 185, 129, 0) 90%
+      );
+      position: absolute;
+      top: -100px;
+      left: 0;
+      pointer-events: none;
+      animation: scanline-anim 6s linear infinite;
+    }
+    @keyframes scanline-anim {
+      0% { top: -100px; }
+      100% { top: 100%; }
+    }
+
+    /* Custom Input and Caret */
+    .caret-custom {
+      animation: blink 0.8s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Glassmorphism panel and Neon borders */
+    .cyber-panel {
+      background: rgba(3, 7, 18, 0.75);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+    .cyber-panel:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+    }
+
+    /* Red Alert overlay when hack fails or triggered */
+    #red-alert-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(239, 68, 68, 0.15);
+      z-index: 9998;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .red-alert-border {
+      border-color: rgba(239, 68, 68, 0.5) !important;
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.25) !important;
+      color: #ef4444 !important;
+    }
+
+    /* Hide default cursor */
+    * { cursor: none !important; }
+    .god-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 14px; height: 14px;
+      border: 2px solid #10b981;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999999;
+      transform: translate(-50%, -50%);
+      transition: width 0.15s, height 0.15s, background-color 0.15s;
+    }
+    .god-cursor.hovering {
+      width: 30px; height: 30px;
+      background-color: rgba(16, 185, 129, 0.15);
+    }
+    .god-cursor.alert {
+      border-color: #ef4444;
+      background-color: rgba(239, 68, 68, 0.15);
+    }
+  </style>
+</head>
+<body class="crt-screen relative min-h-screen p-4 md:p-8 flex flex-col justify-between">
+  <!-- Matrix Falling Code Canvas -->
+  <canvas id="matrix-canvas" class="fixed inset-0 z-0 opacity-15 pointer-events-none"></canvas>
+  <div class="scanline"></div>
+  <div id="red-alert-overlay"></div>
+  <div class="god-cursor hidden md:block" id="custom-cursor"></div>
+
+  <!-- Header Section -->
+  <header class="w-full z-10 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-emerald-500/20 pb-4 mb-6">
+    <div>
+      <h1 class="text-xl md:text-2xl font-black tracking-widest text-emerald-400 flex items-center gap-3">
+        <i class="fas fa-shield-halved animate-pulse"></i> MERCY-OS // EXPLOIT CONTROL PANEL
+      </h1>
+      <p class="text-[10px] font-mono text-emerald-500/60 uppercase tracking-widest mt-1">Status: Operational // System Level: ROOT</p>
+    </div>
+    <div class="flex items-center gap-4 text-xs font-mono mt-3 md:mt-0">
+      <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span> SECURE SHELL ACTIVE</span>
+      <a href="index.html" class="px-3 py-1.5 border border-emerald-500/30 rounded hover:bg-emerald-500/10 hover:border-emerald-500 transition duration-300">
+        <i class="fas fa-arrow-left"></i> EXIT TO PORTFOLIO
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Grid Area -->
+  <main class="w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 z-10">
+    
+    <!-- LEFT SIDE: Main Interactive Terminal (8 Cols) -->
+    <div id="main-terminal-panel" class="cyber-panel lg:col-span-8 rounded-xl p-5 flex flex-col justify-between min-h-[480px]">
+      
+      <!-- Terminal Output Container -->
+      <div id="terminal-logs-wrapper" class="flex-1 overflow-y-auto max-h-[380px] space-y-2 pr-2 text-xs select-text">
+        <div class="text-[10px] text-emerald-500/50 mb-3">MERCY SYSTEM DIAGNOSTICS & ENHANCED EXPLOIT COMMAND LAYER</div>
+        <div class="text-emerald-400">[SYS] Initializing local environment... SUCCESS</div>
+        <div class="text-emerald-400">[SYS] Establishing gateway connection... CONNECTED TO OMNIROUTE</div>
+        <div class="text-emerald-400">[SYS] Type 'help' to print list of offensive modules.</div>
+        <div class="h-4"></div>
+      </div>
+
+      <!-- Live DDoS Chart Canvas (Toggles visible during ddos cmd) -->
+      <div id="ddos-graph-wrapper" class="hidden h-28 border border-emerald-500/20 rounded bg-black/40 my-3 p-2 relative">
+        <span class="absolute top-2 left-2 text-[9px] text-emerald-500/50 font-mono tracking-wider">LIVE DDOS PACKET TRAFFIC RATIO</span>
+        <canvas id="ddos-canvas" class="w-full h-full"></canvas>
+      </div>
+
+      <!-- Terminal Input Command Line -->
+      <div class="flex items-center gap-2 border-t border-emerald-500/20 pt-4 mt-2">
+        <span class="text-emerald-400 font-bold">$</span>
+        <input type="text" id="terminal-cmd-input" class="flex-1 bg-transparent border-none outline-none text-emerald-400 font-mono text-sm caret-transparent" autocomplete="off" autofocus />
+        <span class="w-2.5 h-4 bg-emerald-500 caret-custom"></span>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: System Metrics & Attack Panel (4 Cols) -->
+    <div class="lg:col-span-4 flex flex-col gap-6">
+      
+      <!-- Panel 1: Hardware Metrics -->
+      <div class="cyber-panel rounded-xl p-5 flex flex-col gap-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 border-b border-emerald-500/10 pb-2">
+          <i class="fas fa-microchip"></i> System Load Monitor
+        </h3>
+        
+        <!-- CPU Load Bar -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-[10px]">
+            <span>CENTRAL PROCESSING UNIT</span>
+            <span id="cpu-percent">12%</span>
+          </div>
+          <div class="w-full h-2.5 bg-black/40 border border-emerald-500/20 rounded-sm overflow-hidden">
+            <div id="cpu-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 12%"></div>
+          </div>
+        </div>
+
+        <!-- RAM Usage Bar -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-[10px]">
+            <span>SYSTEM ENCRYPTED MEMORY</span>
+            <span id="ram-percent">45%</span>
+          </div>
+          <div class="w-full h-2.5 bg-black/40 border border-emerald-500/20 rounded-sm overflow-hidden">
+            <div id="ram-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 45%"></div>
+          </div>
+        </div>
+
+        <!-- Network Encryption Key Generation stream -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-[10px]">
+            <span>LIVE SYMMETRIC ENCRYPTION</span>
+            <span class="text-emerald-300 font-mono text-[9px]" id="hash-stream">0x7F...9A</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Live Hack Status Panel -->
+      <div id="hack-status-panel" class="cyber-panel rounded-xl p-5 flex flex-col gap-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 border-b border-emerald-500/10 pb-2">
+          <i class="fas fa-terminal"></i> Attack Log HUD
+        </h3>
+        <div class="flex-1 overflow-hidden font-mono text-[10px] space-y-1.5 text-emerald-500/70" id="exploit-feed-logs">
+          <div>[FEED] Idle. Awaiting CLI command payload...</div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Audio Context Setup & Sounds -->
+  <script>
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+    
+    // Tiếng click bàn phím
+    function playKeyboardClick() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(120 + Math.random() * 600, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.02);
+      } catch (e) {}
+    }
+
+    // Tiếng bíp cảnh báo lỗi (Báo động đỏ)
+    function playAlertSound() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } catch (e) {}
+    }
+
+    // Tiếng hack thành công (Buzzer)
+    function playSuccessBuzzer() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        
+        // Tạo chuỗi tiếng nhạc retro bíp bíp bíp
+        const times = [0, 0.1, 0.2];
+        const freqs = [600, 800, 1000];
+        times.forEach((t, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freqs[i], audioCtx.currentTime + t);
+          gain.gain.setValueAtTime(0.02, audioCtx.currentTime + t);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + t + 0.08);
+          osc.start(audioCtx.currentTime + t);
+          osc.stop(audioCtx.currentTime + t + 0.08);
+        });
+      } catch (e) {}
+    }
+  </script>
+
+  <!-- Interactive Matrix Rain, Chart & CLI script -->
+  <script>
+    let activeGateway = null;
+    let ddosInterval = null;
+    let ddosPoints = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 0. Detect local gateway
+      activeGateway = await detectGateway();
+      if (activeGateway) {
+        appendLog(`[AI GATEWAY] Connected to local ${activeGateway.name} on port ${activeGateway.port}`, 'system');
+      }
+
+      // 1. Matrix Digital Rain
+      initMatrixCanvas();
+
+      // 2. Custom Cursor
+      initCustomCursor();
+
+      // 3. Command Input Handler
+      initCMDInput();
+
+      // 4. Live metrics simulator
+      initMetricsSimulator();
+    });
+
+    async function detectGateway() {
+      const ports = [20128, 9090];
+      for (let port of ports) {
+        try {
+          const res = await fetch(`http://127.0.0.1:${port}/v1/models`, { method: 'GET' });
+          if (res.ok) {
+            return { port, name: port === 20128 ? 'OmniRoute' : '9Router' };
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    // --- MATRIX DIGITAL RAIN CANVAS ---
+    let matrixColor = "#10b981"; // Global color state
+    function initMatrixCanvas() {
+      const canvas = document.getElementById("matrix-canvas");
+      const ctx = canvas.getContext("2d");
+      
+      let resize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      resize();
+      window.addEventListener("resize", resize);
+
+      const columns = Math.floor(canvas.width / 18);
+      const drops = Array(columns).fill(1);
+      const chars = "01010101XYZSYSTEMMALWAREROOTEXPLOIT";
+
+      let draw = () => {
+        ctx.fillStyle = "rgba(3, 7, 18, 0.08)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = matrixColor;
+        ctx.font = "14px monospace";
+        
+        for (let i = 0; i < drops.length; i++) {
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          const x = i * 18;
+          const y = drops[i] * 18;
+          
+          ctx.fillText(text, x, y);
+          
+          if (y > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      };
+      setInterval(draw, 33);
+    }
+
+    // --- CUSTOM CURSOR ---
+    function initCustomCursor() {
+      const cursor = document.getElementById("custom-cursor");
+      if (!cursor) return;
+
+      document.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+      });
+
+      document.querySelectorAll("input, a, button").forEach(el => {
+        el.addEventListener("mouseenter", () => cursor.classList.add("hovering"));
+        el.addEventListener("mouseleave", () => cursor.classList.remove("hovering"));
+      });
+    }
+
+    // --- METRICS SIMULATOR ---
+    function initMetricsSimulator() {
+      const cpuPercent = document.getElementById("cpu-percent");
+      const cpuBar = document.getElementById("cpu-bar");
+      const ramPercent = document.getElementById("ram-percent");
+      const ramBar = document.getElementById("ram-bar");
+      const hashStream = document.getElementById("hash-stream");
+
+      setInterval(() => {
+        // Random CPU & RAM oscillations
+        const cpu = Math.floor(10 + Math.random() * 30);
+        const ram = Math.floor(40 + Math.random() * 10);
+        
+        cpuPercent.innerText = `${cpu}%`;
+        cpuBar.style.width = `${cpu}%`;
+        ramPercent.innerText = `${ram}%`;
+        ramBar.style.width = `${ram}%`;
+        
+        // Random Hex crypto hash string
+        const hex = "0x" + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join("").toUpperCase();
+        hashStream.innerText = hex;
+      }, 2000);
+    }
+
+    // --- LIVE EXPLOIT LOG FEED ---
+    function logExploitFeed(text) {
+      const feed = document.getElementById("exploit-feed-logs");
+      if (!feed) return;
+      
+      const line = document.createElement("div");
+      line.innerText = `[${new Date().toLocaleTimeString()}] ${text}`;
+      feed.appendChild(line);
+      
+      if (feed.children.length > 8) {
+        feed.removeChild(feed.firstChild);
+      }
+    }
+
+    // --- TERMINAL LOGGER ---
+    function appendLog(text, type = 'info') {
+      const wrapper = document.getElementById("terminal-logs-wrapper");
+      if (!wrapper) return;
+      
+      const line = document.createElement("div");
+      line.className = "leading-relaxed break-all";
+      
+      if (type === 'system') {
+        line.innerHTML = `<span class="text-emerald-500/60">[SYS]</span> ${text}`;
+      } else if (type === 'user') {
+        line.innerHTML = `<span class="text-emerald-400 font-bold">$</span> ${text}`;
+      } else if (type === 'error') {
+        line.className = "text-red-500 leading-relaxed font-bold animate-pulse";
+        line.innerHTML = `<span class="text-red-600">[FAIL]</span> ${text}`;
+      } else if (type === 'success') {
+        line.className = "text-cyan-400 leading-relaxed font-semibold";
+        line.innerHTML = `<span class="text-cyan-400 font-bold">[OK]</span> ${text}`;
+      } else {
+        line.innerHTML = `<span class="text-emerald-500/40">></span> ${text}`;
+      }
+      
+      wrapper.appendChild(line);
+      wrapper.scrollTop = wrapper.scrollHeight;
+    }
+
+    // --- CMD KEYDOWN INPUT ---
+    function initCMDInput() {
+      const input = document.getElementById("terminal-cmd-input");
+      if (!input) return;
+
+      // Click terminal to focus input
+      document.getElementById("main-terminal-panel").addEventListener("click", () => {
+        input.focus();
+      });
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const rawVal = input.value;
+          const cmd = rawVal.trim();
+          input.value = "";
+          
+          if (!cmd) return;
+          
+          playKeyboardClick();
+          appendLog(rawVal, 'user');
+          interpretCMD(cmd);
+        } else {
+          playKeyboardClick();
+        }
+      });
+    }
+
+    // --- RED ALERT WARNING ANIMATION ---
+    function triggerRedAlert(durationMs = 1500) {
+      const overlay = document.getElementById("red-alert-overlay");
+      const cursor = document.getElementById("custom-cursor");
+      const terminalPanel = document.getElementById("main-terminal-panel");
+      const statusPanel = document.getElementById("hack-status-panel");
+      
+      playAlertSound();
+      
+      overlay.style.opacity = "1";
+      cursor.classList.add("alert");
+      terminalPanel.classList.add("red-alert-border");
+      statusPanel.classList.add("red-alert-border");
+
+      setTimeout(() => {
+        overlay.style.opacity = "0";
+        cursor.classList.remove("alert");
+        terminalPanel.classList.remove("red-alert-border");
+        statusPanel.classList.remove("red-alert-border");
+      }, durationMs);
+    }
+
+    // --- DDOS PACKET TRAFFIC GRAPH ---
+    function renderDDOSGraph(isActive) {
+      const wrapper = document.getElementById("ddos-graph-wrapper");
+      const canvas = document.getElementById("ddos-canvas");
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext("2d");
+      
+      if (!isActive) {
+        wrapper.classList.add("hidden");
+        clearInterval(ddosInterval);
+        return;
+      }
+      
+      wrapper.classList.remove("hidden");
+      canvas.width = wrapper.clientWidth;
+      canvas.height = wrapper.clientHeight;
+      
+      ddosPoints = Array(50).fill(10);
+      
+      ddosInterval = setInterval(() => {
+        // Shift metrics
+        ddosPoints.shift();
+        ddosPoints.push(30 + Math.random() * 50);
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw grid
+        ctx.strokeStyle = "rgba(16, 185, 129, 0.05)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i < canvas.width; i += 20) {
+          ctx.beginPath();
+          ctx.moveTo(i, 0);
+          ctx.lineTo(i, canvas.height);
+          ctx.stroke();
+        }
+        
+        // Draw lines
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const step = canvas.width / (ddosPoints.length - 1);
+        
+        ddosPoints.forEach((p, idx) => {
+          const x = idx * step;
+          const y = canvas.height - p;
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }, 100);
+    }
+
+    // --- EXPLOIT ANIMATION SCENARIOS ---
+    function startExploitSimulation(target) {
+      appendLog(`Connecting to exploit vector... TARGET: ${target}`, 'system');
+      appendLog(`Sending buffer payload overflow injection...`, 'info');
+      logExploitFeed(`Payload injected targeting ${target}`);
+
+      let percent = 0;
+      const progressLine = document.createElement("div");
+      progressLine.className = "text-emerald-400 font-mono";
+      document.getElementById("terminal-logs-wrapper").appendChild(progressLine);
+
+      const interval = setInterval(() => {
+        percent += Math.floor(Math.random() * 15) + 5;
+        if (percent >= 100) {
+          percent = 100;
+          clearInterval(interval);
+          progressLine.innerText = `EXPLOIT PAYLOAD: [████████████████████] 100% SUCCESS`;
+          appendLog(`Target host: root shell spawned! ACCESS GRANTED.`, 'success');
+          logExploitFeed(`Target host breached successfully.`);
+          
+          playSuccessBuzzer();
+          confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        } else {
+          const barLength = Math.floor(percent / 5);
+          const barStr = "█".repeat(barLength) + "░".repeat(20 - barLength);
+          progressLine.innerText = `EXPLOIT PAYLOAD: [${barStr}] ${percent}%`;
+          logExploitFeed(`Khai thác payload... ${percent}%`);
+        }
+        document.getElementById("terminal-logs-wrapper").scrollTop = document.getElementById("terminal-logs-wrapper").scrollHeight;
+      }, 300);
+    }
+
+    // --- DECRYPT SIMULATION ---
+    function startDecryptionSimulation(hash) {
+      appendLog(`Target hash acquired: ${hash}`, 'system');
+      appendLog(`Running dictionary dynamic attack vector...`, 'info');
+
+      let attempt = 0;
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+      const decryptLine = document.createElement("div");
+      decryptLine.className = "text-emerald-400 font-mono leading-relaxed";
+      document.getElementById("terminal-logs-wrapper").appendChild(decryptLine);
+
+      const interval = setInterval(() => {
+        attempt++;
+        let randomStr = Array.from({length: 12}, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+        decryptLine.innerText = `BRUTE-FORCE: [${randomStr}] ATTEMPTS: ${attempt * 128}/sec`;
+        
+        if (attempt > 15) {
+          clearInterval(interval);
+          decryptLine.innerText = `DECRYPT KEY DECRYPTED: [admin_root_pass_2026] MATCH FOUND!`;
+          appendLog("Plaintext key recovered successfully.", 'success');
+          logExploitFeed(`Hash decrypted successfully.`);
+          playSuccessBuzzer();
+        }
+      }, 150);
+    }
+
+    // --- SCAN SIMULATION ---
+    function startScanSimulation(target) {
+      appendLog(`Pinging host targeting: ${target}...`, 'system');
+      logExploitFeed(`Scanning ${target}`);
+      
+      const ports = [21, 22, 80, 443, 3306, 8080];
+      let idx = 0;
+
+      const scanInterval = setInterval(() => {
+        if (idx >= ports.length) {
+          clearInterval(scanInterval);
+          appendLog("Ports detection query completed.", 'success');
+          logExploitFeed(`Port scan done for ${target}`);
+          playSuccessBuzzer();
+        } else {
+          const port = ports[idx];
+          const isOpen = Math.random() > 0.4;
+          const status = isOpen ? '<span class="text-cyan-400">[OPEN]</span>' : '<span class="text-emerald-700">[CLOSED]</span>';
+          appendLog(`PORT ${port}/TCP  -  Status: ${status}  -  Service: ${port === 80 ? 'http' : port === 443 ? 'https' : port === 22 ? 'ssh' : 'unknown'}`, 'info');
+          idx++;
+        }
+      }, 300);
+    }
+
+    // --- DOWNLOAD SIMULATION ---
+    function startDownloadSimulation(filename) {
+      appendLog(`Downloading cyber exploit file: ${filename}...`, 'system');
+      logExploitFeed(`Downloading ${filename}`);
+
+      let percent = 0;
+      const progressLine = document.createElement("div");
+      progressLine.className = "text-emerald-400 font-mono";
+      document.getElementById("terminal-logs-wrapper").appendChild(progressLine);
+
+      const interval = setInterval(() => {
+        percent += Math.floor(Math.random() * 20) + 10;
+        if (percent >= 100) {
+          percent = 100;
+          clearInterval(interval);
+          progressLine.innerText = `DOWNLOAD: [████████████████████] 100% SUCCESS`;
+          appendLog(`File '${filename}' downloaded to local storage root. Ready for deployment.`, 'success');
+          logExploitFeed(`Downloaded ${filename} successfully.`);
+          playSuccessBuzzer();
+        } else {
+          const barLength = Math.floor(percent / 5);
+          const barStr = "█".repeat(barLength) + "░".repeat(20 - barLength);
+          progressLine.innerText = `DOWNLOAD: [${barStr}] ${percent}%`;
+          logExploitFeed(`Tải file... ${percent}%`);
+        }
+        document.getElementById("terminal-logs-wrapper").scrollTop = document.getElementById("terminal-logs-wrapper").scrollHeight;
+      }, 200);
+    }
+
+    // --- CLI INTERPRETER ---
+    function interpretCMD(rawCmd) {
+      const parts = rawCmd.trim().split(" ");
+      const cmd = parts[0].toLowerCase();
+      const arg = parts.slice(1).join(" ");
+
+      if (cmd === 'help') {
+        appendLog("OFFENSIVE CONTROL MODULES HELP MATRIX:", 'success');
+        appendLog("  scan <ip/url>     - Scan destination ports and open services", 'info');
+        appendLog("  exploit <host>    - Execute payload to spawn root shell", 'info');
+        appendLog("  download <file>   - Fetch remote exploit scripts to local root", 'info');
+        appendLog("  ddos <url>        - Flood network packets at target", 'info');
+        appendLog("  ddos-stop         - Halt active DDoS attack simulation", 'info');
+        appendLog("  decrypt <hash>    - Run dictionary attack decrypt md5/sha256", 'info');
+        appendLog("  matrix-color <c>  - Shift matrix digital rain color (green/red/cyan/yellow)", 'info');
+        appendLog("  chat <text>       - Ask Triều Hí AI hacker mentor for details", 'info');
+        appendLog("  secret            - Launch internal easter egg", 'info');
+        appendLog("  clear             - Purge terminal output", 'info');
+      } else if (cmd === 'clear') {
+        const wrapper = document.getElementById("terminal-logs-wrapper");
+        if (wrapper) {
+          wrapper.innerHTML = '<div class="text-[10px] text-emerald-500/50 mb-3">MERCY SYSTEM DIAGNOSTICS & ENHANCED EXPLOIT COMMAND LAYER</div>';
+        }
+      } else if (cmd === 'scan') {
+        if (!arg) {
+          appendLog("Scan error: Missing IP or Domain target.", 'error');
+          triggerRedAlert();
+          return;
+        }
+        startScanSimulation(arg);
+      } else if (cmd === 'exploit') {
+        if (!arg) {
+          appendLog("Exploit error: Missing exploit target server.", 'error');
+          triggerRedAlert();
+          return;
+        }
+        startExploitSimulation(arg);
+      } else if (cmd === 'download') {
+        if (!arg) {
+          appendLog("Download error: Missing payload filename.", 'error');
+          triggerRedAlert();
+          return;
+        }
+        startDownloadSimulation(arg);
+      } else if (cmd === 'decrypt') {
+        if (!arg) {
+          appendLog("Decrypt error: Missing hash syntax string.", 'error');
+          triggerRedAlert();
+          return;
+        }
+        startDecryptionSimulation(arg);
+      } else if (cmd === 'matrix-color') {
+        const color = arg.toLowerCase();
+        if (color === 'red') {
+          matrixColor = '#ef4444';
+          appendLog("Matrix digital rain color set to RED.", 'success');
+        } else if (color === 'green') {
+          matrixColor = '#10b981';
+          appendLog("Matrix digital rain color set to GREEN.", 'success');
+        } else if (color === 'cyan' || color === 'blue') {
+          matrixColor = '#06b6d4';
+          appendLog("Matrix digital rain color set to CYAN.", 'success');
+        } else if (color === 'yellow') {
+          matrixColor = '#eab308';
+          appendLog("Matrix digital rain color set to YELLOW.", 'success');
+        } else {
+          appendLog("Usage: matrix-color <green/red/cyan/yellow>", 'error');
+          triggerRedAlert();
+        }
+      } else if (cmd === 'ddos') {
+        if (!arg) {
+          appendLog("DDoS error: Missing flooding target url.", 'error');
+          triggerRedAlert();
+          return;
+        }
+        appendLog(`Flooding target: ${arg} on ports 80/443...`, 'system');
+        logExploitFeed(`Flooding ${arg}...`);
+        renderDDOSGraph(true);
+      } else if (cmd === 'ddos-stop') {
+        appendLog("Halting DDoS flood operations...", 'system');
+        logExploitFeed(`Flooding operations stopped.`);
+        renderDDOSGraph(false);
+      } else if (cmd === 'secret') {
+        appendLog("Easter egg protocol launched! Boom!", 'success');
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        playSuccessBuzzer();
+      } else if (cmd.startsWith('chat')) {
+        if (!arg) {
+          appendLog("AI chat error: Gõ lệnh chat <nội dung>", 'error');
+          triggerRedAlert();
+          return;
+        }
+        appendLog("Connecting to local AI Gateway...", 'system');
+        
+        let url = 'https://text.pollinations.ai/';
+        let bodyObj = {
+          messages: [
+            { 
+              role: 'system', 
+              content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack Hacker. 
+Hãy xưng hô là "Triều Hí" hoặc "team" và gọi người dùng là "sếp". Trả lời cực kỳ ngắn gọn (1 câu), phong cách hacker/developer chuyên nghiệp bằng tiếng Việt.` 
+            },
+            { role: 'user', content: arg }
+          ]
+        };
+
+        if (activeGateway) {
+          url = `http://127.0.0.1:${activeGateway.port}/v1/chat/completions`;
+          bodyObj.model = 'gpt-4o';
+        }
+
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyObj)
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("API Connection Failure");
+          return activeGateway ? res.json() : res.text();
+        })
+        .then(data => {
+          let reply = activeGateway ? data.choices[0].message.content.trim() : data.trim();
+          appendLog(`[TRIEU_HI] ${reply}`, 'success');
+        })
+        .catch(err => {
+          appendLog(`AI Error: ${err.message}`, 'error');
+          triggerRedAlert();
+        });
+      } else {
+        appendLog(`Invalid payload input: '${cmd}'. Gõ 'help' để xem danh sách lệnh.`, 'error');
+        triggerRedAlert();
+      }
+    }
+  </script>
+</body>
+</html>

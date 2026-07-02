@@ -327,7 +327,6 @@
     /* Hide horizontal scrollbars */
     body { overflow-x: hidden; }
 
-    
     /* Beyond Ultra: Glare Effect */
     .securify-card {
       position: relative;
@@ -344,6 +343,46 @@
     }
     .securify-card:hover {
       box-shadow: 0 30px 60px -15px rgba(6, 182, 212, 0.25), 0 0 20px 2px rgba(6, 182, 212, 0.1) inset;
+    }
+
+    /* Custom Focus Glow for Cyber Inputs & Floating effects */
+    .cyber-input {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .cyber-input:focus {
+      border-color: #06b6d4 !important;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.3) !important;
+      background-color: rgba(15, 23, 42, 0.8) !important;
+    }
+
+    .levitate-slow {
+      animation: levitate-anim 4s ease-in-out infinite alternate;
+    }
+    .levitate-medium {
+      animation: levitate-anim 3s ease-in-out infinite alternate;
+    }
+    @keyframes levitate-anim {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
+    /* CSS cho hiệu ứng chuyển đổi theme view-transition */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+    ::view-transition-old(root) {
+      z-index: 1;
+    }
+    ::view-transition-new(root) {
+      z-index: 9999;
+    }
+    .dark::view-transition-old(root) {
+      z-index: 9999;
+    }
+    .dark::view-transition-new(root) {
+      z-index: 1;
     }
 
     /* --- SECURIFY BENTO UI --- */
@@ -709,7 +748,7 @@
             </button>
           </div>
           <!-- Theme Toggle -->
-          <button id="btn-theme" onclick="toggleTheme()" class="p-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm transition hover:bg-zinc-100 dark:hover:securify-card" title="Toggle Theme">
+          <button id="btn-theme" onclick="toggleTheme(event)" class="p-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm transition hover:bg-zinc-100 dark:hover:securify-card" title="Toggle Theme">
             <i class="fas fa-moon"></i>
           </button>
           <!-- Audio Toggle -->
@@ -747,7 +786,7 @@
             EN
           </button>
         </div>
-        <button id="btn-theme-mobile" onclick="toggleTheme()" class="p-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm transition hover:bg-zinc-100 dark:hover:securify-card">
+        <button id="btn-theme-mobile" onclick="toggleTheme(event)" class="p-2 rounded-md border border-zinc-300 dark:border-zinc-700 text-sm transition hover:bg-zinc-100 dark:hover:securify-card">
           <i class="fas fa-moon"></i>
         </button>
       </div>
@@ -907,7 +946,6 @@
               <h3 id="label-bio-title" class="text-xl text-white font-bold mb-4">Background & Bio</h3>
               <p id="label-about-bio" class="text-slate-400 text-lg leading-relaxed">I am an IT student from University of Science, TP.HCM. With a deep passion for programming, I am constantly learning and adapting to new technologies to build robust and beautiful applications.</p>
             </div>
-            </div>
           </div>
 
           <!-- God Tier System Uptime / Technical Metric -->
@@ -1060,40 +1098,91 @@
 
         <div class="bento-grid">
           
-          <div class="securify-card col-span-12 md:col-span-8 p-8 flex flex-col justify-center gs-reveal-up">
-          <div class="glare"></div>
-            <h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-layer-group text-cyan-400 mr-2"></i> Frontend Architecture</h3>
-            <div class="grid grid-cols-3 sm:grid-cols-4 gap-6">
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-react-original colored text-5xl group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">React</span></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-nextjs-original text-5xl text-white group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">Next.js</span></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-vuejs-plain colored text-5xl group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">Vue</span></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-tailwindcss-plain colored text-5xl group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">Tailwind</span></div>
+          <div class="securify-card col-span-12 md:col-span-8 p-8 flex flex-col justify-between gs-reveal-up">
+            <div class="glare"></div>
+            <div>
+              <h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-layer-group text-cyan-400 mr-2"></i> Frontend Architecture</h3>
+              <div class="grid grid-cols-3 sm:grid-cols-4 gap-6 mb-6">
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-react-original colored text-5xl group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">React</span></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-nextjs-original text-5xl text-white group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">Next.js</span></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-vuejs-plain colored text-5xl group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">Vue</span></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-tailwindcss-plain colored text-5xl group-hover:scale-110 transition-transform"></i><span class="text-xs text-slate-400 font-mono">Tailwind</span></div>
+              </div>
+            </div>
+            <!-- Progress Meters -->
+            <div class="pt-4 border-t border-white/5 space-y-3.5">
+              <div>
+                <div class="flex justify-between text-xs text-slate-400 font-mono mb-1">
+                  <span>Single Page Apps & Next.js Architecture</span>
+                  <span class="text-cyan-400">92%</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-950/80 rounded-full overflow-hidden border border-white/5">
+                  <div class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full skill-bar origin-left" style="width: 92%; transform: scaleX(0);"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-slate-400 font-mono mb-1">
+                  <span>Responsive UI & CSS Animation Frameworks</span>
+                  <span class="text-cyan-400">88%</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-950/80 rounded-full overflow-hidden border border-white/5">
+                  <div class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full skill-bar origin-left" style="width: 88%; transform: scaleX(0);"></div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="securify-card col-span-12 md:col-span-4 p-8 gs-reveal-up" style="animation-delay: 0.1s">
-          <div class="glare"></div>
-            <h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-server text-emerald-400 mr-2"></i> Backend</h3>
-            <div class="flex flex-wrap gap-4">
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-nodejs-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-express-original text-4xl text-white group-hover:scale-110 transition-transform"></i></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-python-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+          <div class="securify-card col-span-12 md:col-span-4 p-8 flex flex-col justify-between gs-reveal-up" style="animation-delay: 0.1s">
+            <div class="glare"></div>
+            <div>
+              <h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-server text-emerald-400 mr-2"></i> Backend</h3>
+              <div class="flex flex-wrap gap-4 mb-6">
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-nodejs-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-express-original text-4xl text-white group-hover:scale-110 transition-transform"></i></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-python-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+              </div>
+            </div>
+            <!-- Progress Meters -->
+            <div class="pt-4 border-t border-white/5 space-y-3.5">
+              <div>
+                <div class="flex justify-between text-xs text-slate-400 font-mono mb-1">
+                  <span>REST API & Node.js Serverless</span>
+                  <span class="text-emerald-400">85%</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-950/80 rounded-full overflow-hidden border border-white/5">
+                  <div class="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 rounded-full skill-bar origin-left" style="width: 85%; transform: scaleX(0);"></div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="securify-card col-span-12 md:col-span-5 p-8 gs-reveal-up" style="animation-delay: 0.2s">
-          <div class="glare"></div>
-            <h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-database text-violet-400 mr-2"></i> Database & DevOps</h3>
-             <div class="flex flex-wrap gap-6">
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-mongodb-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-postgresql-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-docker-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
-              <div class="flex flex-col items-center gap-2 group"><i class="devicon-git-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+          <div class="securify-card col-span-12 md:col-span-5 p-8 flex flex-col justify-between gs-reveal-up" style="animation-delay: 0.2s">
+            <div class="glare"></div>
+            <div>
+              <h3 class="text-2xl font-bold text-white mb-6"><i class="fas fa-database text-violet-400 mr-2"></i> Database & DevOps</h3>
+              <div class="flex flex-wrap gap-6 mb-6">
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-mongodb-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-postgresql-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-docker-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+                <div class="flex flex-col items-center gap-2 group"><i class="devicon-git-plain colored text-4xl group-hover:scale-110 transition-transform"></i></div>
+              </div>
+            </div>
+            <!-- Progress Meters -->
+            <div class="pt-4 border-t border-white/5 space-y-3.5">
+              <div>
+                <div class="flex justify-between text-xs text-slate-400 font-mono mb-1">
+                  <span>Database Query & Docker System Integration</span>
+                  <span class="text-violet-400">80%</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-950/80 rounded-full overflow-hidden border border-white/5">
+                  <div class="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full skill-bar origin-left" style="width: 80%; transform: scaleX(0);"></div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="securify-card col-span-12 md:col-span-7 p-8 relative overflow-hidden flex items-center justify-center gs-reveal-up" style="animation-delay: 0.3s">
-          <div class="glare"></div>
+            <div class="glare"></div>
             <!-- Decorative Background -->
             <div class="absolute inset-0 opacity-20 pointer-events-none" style="background: repeating-linear-gradient(45deg, transparent, transparent 10px, #06b6d4 10px, #06b6d4 11px);"></div>
             <h3 class="text-3xl font-extrabold text-white text-center relative z-10 uppercase tracking-widest mix-blend-difference">Always Learning</h3>
@@ -1147,28 +1236,28 @@
             <!-- Name Input -->
             <div class="space-y-1.5">
               <label for="contact-name" id="form-label-name" class="block text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider"></label>
-              <input type="text" id="contact-name" name="name" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white" />
+              <input type="text" id="contact-name" name="name" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white cyber-input" />
               <p id="error-name" class="text-xs text-red-500 font-medium hidden"></p>
             </div>
 
             <!-- Email Input -->
             <div class="space-y-1.5">
               <label for="contact-email" id="form-label-email" class="block text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider"></label>
-              <input type="email" id="contact-email" name="email" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white" />
+              <input type="email" id="contact-email" name="email" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white cyber-input" />
               <p id="error-email" class="text-xs text-red-500 font-medium hidden"></p>
             </div>
 
             <!-- Phone Input -->
             <div class="space-y-1.5">
               <label for="contact-phone" id="form-label-phone" class="block text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider"></label>
-              <input type="tel" id="contact-phone" name="phone" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white" />
+              <input type="tel" id="contact-phone" name="phone" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white cyber-input" />
               <p id="error-phone" class="text-xs text-red-500 font-medium hidden"></p>
             </div>
 
             <!-- Message Input -->
             <div class="space-y-1.5">
               <label for="contact-message" id="form-label-message" class="block text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider"></label>
-              <textarea id="contact-message" name="message" rows="4" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white resize-none"></textarea>
+              <textarea id="contact-message" name="message" rows="4" class="w-full bg-white dark:bg-black/50 border border-zinc-300 dark:border-zinc-700 rounded-lg py-2.5 px-4 text-sm outline-none transition-all duration-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 dark:text-white resize-none cyber-input"></textarea>
               <p id="error-message" class="text-xs text-red-500 font-medium hidden"></p>
             </div>
 
@@ -1329,7 +1418,15 @@
         "career.title": "Career\nChronicles.",
         "career.desc": "A timeline of my professional journey, focusing on building scalable systems and polished user interfaces.",
         projects: [
-
+          {
+            id: 1,
+            name: "MERCY-OS Exploit Control Panel",
+            image: "project_hacker.png",
+            description: "An advanced cyber security & network penetration testing simulator. Built with standard mechanical haptics, CRT scanline display filters, matrix falling binary animations, live data charts, and connected to Triều Hí AI agent framework.",
+            technologies: ["HTML5", "CSS3 Canvas", "JavaScript", "GSAP ScrollTrigger"],
+            demoLink: "hack.html",
+            codeLink: "https://github.com/Mercy222222/webbanhang"
+          },
           {
             id: 2,
             name: "Vo Huu Tri SMM Panel",
@@ -1471,7 +1568,15 @@
         "career.title": "Biên niên sử\nSự nghiệp.",
         "career.desc": "Dòng thời gian hành trình làm việc chuyên nghiệp của mình, tập trung vào xây dựng các hệ thống quy mô lớn và giao diện mượt mà.",
         projects: [
-
+          {
+            id: 1,
+            name: "Hệ thống giả lập Hacker MERCY-OS",
+            image: "project_hacker.png",
+            description: "Trang web giả lập bảng điều khiển tấn công an ninh mạng chuyên nghiệp. Tích hợp màn hình lọc CRT cổ điển, mưa mã nhị phân Matrix Canvas, còi báo động Red Alert, tiếng gõ phím haptic và chatbot AI hỗ trợ thông minh.",
+            technologies: ["HTML5", "CSS3 Canvas", "JavaScript", "GSAP ScrollTrigger"],
+            demoLink: "hack.html",
+            codeLink: "https://github.com/Mercy222222/webbanhang"
+          },
           {
             id: 2,
             name: "Võ Hữu Trí SMM Panel",
@@ -1784,10 +1889,9 @@
       container.innerHTML = '';
 
       const certs = W2[currentLanguage].certificates || [];
-      const isVisible = document.getElementById('certificates')?.classList.contains('visible');
       certs.forEach((cert) => {
         const card = document.createElement('div');
-        card.className = `certificate-card bg-zinc-50 dark:bg-black/20 rounded-xl border border-zinc-200/50 dark:/50 p-5 flex flex-col justify-between transition-all duration-300 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[30px]'}`;
+        card.className = `certificate-card bg-zinc-50 dark:bg-black/20 rounded-xl border border-zinc-200/50 dark:/50 p-5 flex flex-col justify-between transition-all duration-300 hover:scale-105 opacity-0`;
         
         card.onmouseenter = (e) => {
           e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 123, 255, 0.15)';
@@ -1815,6 +1919,24 @@
         container.appendChild(card);
       });
       init3DTilt();
+
+      // GSAP Stagger ScrollTrigger Reveal
+      gsap.fromTo(container.querySelectorAll('.certificate-card'),
+        { y: 40, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '#certificates-grid-container',
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.08,
+          ease: 'power2.out',
+          overwrite: 'auto'
+        }
+      );
     }
 
     // Popup xem chi tiết chứng chỉ
@@ -1875,10 +1997,9 @@
       container.innerHTML = '';
 
       const list = W2[currentLanguage].projects || [];
-      const isVisible = document.getElementById('projects')?.classList.contains('visible');
       list.forEach((project) => {
         const card = document.createElement('div');
-        card.className = `project-card rounded-xl border border-zinc-200/50 dark:/50 flex flex-col overflow-hidden transition-all duration-300 hover:scale-105 bg-zinc-50 dark:bg-black/20 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[30px]'}`;
+        card.className = `project-card rounded-xl border border-zinc-200/50 dark:/50 flex flex-col overflow-hidden transition-all duration-300 hover:scale-105 bg-zinc-50 dark:bg-black/20 opacity-0`;
         
         card.onmouseenter = (e) => {
           e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 123, 255, 0.15)';
@@ -1922,6 +2043,24 @@
         container.appendChild(card);
       });
       init3DTilt();
+
+      // GSAP Stagger ScrollTrigger Reveal
+      gsap.fromTo(container.querySelectorAll('.project-card'),
+        { y: 40, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: '#projects-grid-container',
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.08,
+          ease: 'power2.out',
+          overwrite: 'auto'
+        }
+      );
     }
 
     /* ─── DỊCH THUẬT VÀ THAY ĐỔI NGÔN NGỮ (I18N) ─── */
@@ -2302,10 +2441,47 @@
       }
     }
 
-    function toggleTheme() {
-      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('portfolio_theme', currentTheme);
-      initTheme();
+    function toggleTheme(event) {
+      const isDark = currentTheme === 'dark';
+      const targetTheme = isDark ? 'light' : 'dark';
+
+      // Fallback nếu trình duyệt không hỗ trợ View Transition API
+      if (!document.startViewTransition || !event) {
+        currentTheme = targetTheme;
+        localStorage.setItem('portfolio_theme', currentTheme);
+        initTheme();
+        return;
+      }
+
+      const x = event.clientX;
+      const y = event.clientY;
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      const transition = document.startViewTransition(() => {
+        currentTheme = targetTheme;
+        localStorage.setItem('portfolio_theme', currentTheme);
+        initTheme();
+      });
+
+      transition.ready.then(() => {
+        const clipPath = [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${endRadius}px at ${x}px ${y}px)`
+        ];
+        document.documentElement.animate(
+          {
+            clipPath: isDark ? clipPath.reverse() : clipPath
+          },
+          {
+            duration: 500,
+            easing: 'ease-in-out',
+            pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)'
+          }
+        );
+      });
     }
 
     /* ─── HAMBURGER MENU CHO DI ĐỘNG ─── */
@@ -3925,12 +4101,16 @@
     function interpretTerminalCommand(cmd) {
       if (cmd === 'help') {
         appendTerminalLog("Available commands:", 'info');
-        appendTerminalLog("  about    - Summary about Vo Huu Tri", 'info');
-        appendTerminalLog("  skills   - List of technical capabilities", 'info');
-        appendTerminalLog("  projects - Dynamic list of core web products", 'info');
-        appendTerminalLog("  clear    - Clear console display", 'info');
-        appendTerminalLog("  matrix   - Trigger retro code rain matrix", 'info');
-        appendTerminalLog("  secret   - Trigger a secret particle event", 'info');
+        appendTerminalLog("  about          - Summary about Vo Huu Tri", 'info');
+        appendTerminalLog("  skills         - List of technical capabilities", 'info');
+        appendTerminalLog("  projects       - Dynamic list of core web products", 'info');
+        appendTerminalLog("  hack           - Launch Mercy-OS Exploit Control Panel", 'info');
+        appendTerminalLog("  chat <message> - Converse directly with Triều Hí AI", 'info');
+        appendTerminalLog("  models         - View all available local AI gateways", 'info');
+        appendTerminalLog("  team           - List 10 members of Elite Fleet", 'info');
+        appendTerminalLog("  clear          - Clear console display", 'info');
+        appendTerminalLog("  matrix         - Trigger retro code rain matrix", 'info');
+        appendTerminalLog("  secret         - Trigger a secret particle event", 'info');
       } else if (cmd === 'clear') {
         const container = document.getElementById('terminal-logs');
         if (container) container.innerHTML = '';
@@ -3946,8 +4126,15 @@
         appendTerminalLog(`  ${skillList}`, 'info');
       } else if (cmd === 'projects') {
         appendTerminalLog("Querying Active Projects:", 'success');
+        appendTerminalLog("  - Mercy-OS Exploit Control Panel (Hacking Simulator)", 'info');
         appendTerminalLog("  - Vo Huu Tri SMM Panel (Automated interaction server)", 'info');
         appendTerminalLog("  - Vo Huu Tri Blogs (PSD sharing & system tips)", 'info');
+      } else if (cmd === 'hack' || cmd === 'exploit') {
+        appendTerminalLog("Accessing Mercy-OS Exploit Control Panel...", 'success');
+        appendTerminalLog("Redirecting in 1.5 seconds... PREPARE PAYLOAD.", 'info');
+        setTimeout(() => {
+          window.location.href = 'hack.html';
+        }, 1500);
       } else if (cmd === 'secret') {
         appendTerminalLog("Triggering secret protocol... BLAST OUT!", 'success');
         confetti({
@@ -3965,6 +4152,65 @@
           count++;
           if (count > 10) clearInterval(interval);
         }, 150);
+      } else if (cmd.startsWith('chat ')) {
+        const text = cmd.substring(5).trim();
+        if (!text) {
+          appendTerminalLog("Usage: chat <message>", 'error');
+          return;
+        }
+        appendTerminalLog("Connecting to AI Gateway...", 'info');
+        
+        let url = 'https://text.pollinations.ai/';
+        let bodyObj = {
+          messages: [
+            { 
+              role: 'system', 
+              content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack trình độ Giáo sư/Tiến sĩ. 
+Hãy xưng hô là "Triều Hí" hoặc "team" và gọi người dùng là "sếp". Trả lời cực kỳ ngắn gọn (1 câu), phong cách hacker/developer chuyên nghiệp bằng tiếng Việt.` 
+            },
+            { role: 'user', content: text }
+          ]
+        };
+
+        if (activeGateway) {
+          url = `http://127.0.0.1:${activeGateway.port}/v1/chat/completions`;
+          bodyObj.model = 'gpt-4o';
+        }
+
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyObj)
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("API Error");
+          return activeGateway ? res.json() : res.text();
+        })
+        .then(data => {
+          let reply = activeGateway ? data.choices[0].message.content.trim() : data.trim();
+          appendTerminalLog(`[TRIEU_HI] ${reply}`, 'success');
+        })
+        .catch(err => {
+          appendTerminalLog(`AI Error: ${err.message}`, 'error');
+        });
+      } else if (cmd === 'models') {
+        appendTerminalLog("Available AI Models via local gateway:", 'success');
+        appendTerminalLog("  - Claude 3.5 Sonnet (Agentic Core)", 'info');
+        appendTerminalLog("  - GPT-4o (OpenAI Omni)", 'info');
+        appendTerminalLog("  - Gemini 1.5 Pro (Google)", 'info');
+        appendTerminalLog("  - Llama 3 70B (Meta)", 'info');
+        appendTerminalLog("  - Mistral Large (Mistral AI)", 'info');
+        if (activeGateway) {
+          appendTerminalLog(`  Active Gateway: connected to local ${activeGateway.name} on port ${activeGateway.port}`, 'success');
+        } else {
+          appendTerminalLog("  Active Gateway: None. Using Cloud Fallback.", 'info');
+        }
+      } else if (cmd === 'team') {
+        appendTerminalLog("Elite Fleet - 10 Core members loaded:", 'success');
+        appendTerminalLog("  - Prof. System Architecture - System designer", 'info');
+        appendTerminalLog("  - Prof. Backend - Node.js/Python expert", 'info');
+        appendTerminalLog("  - Prof. AI - Model routing specialist", 'info');
+        appendTerminalLog("  - Dr. Frontend - CSS & GSAP artist", 'info');
       } else {
         appendTerminalLog(`Command not found: '${cmd}'. Type 'help' for commands.`, 'error');
       }
@@ -4056,6 +4302,14 @@
     document.addEventListener("DOMContentLoaded", () => {
       gsap.registerPlugin(ScrollTrigger);
 
+      // 0. Hero Entrance Timeline (Entrance Stagger)
+      const heroTL = gsap.timeline({ defaults: { ease: 'power4.out', duration: 1.2 } });
+      heroTL.from('#home .pill-badge', { y: 25, opacity: 0, scale: 0.9 })
+            .from('#home h1', { y: 45, opacity: 0, scale: 0.95 }, '-=0.8')
+            .from('#home p', { y: 30, opacity: 0 }, '-=0.9')
+            .from('#home .flex-wrap', { y: 25, opacity: 0 }, '-=0.9')
+            .from('#home .securify-card', { x: 50, opacity: 0, rotationY: 15 }, '-=1');
+
       // 1. Beyond Ultra Text Scrub (3D Flip & Blur)
       const splitText = document.getElementById('about-scrub');
       if (splitText) {
@@ -4082,6 +4336,53 @@
           }
         );
       }
+
+      // About Bento Grid Stagger Reveal
+      gsap.from('#about .bento-grid > div', {
+        scrollTrigger: {
+          trigger: '#about .bento-grid',
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        },
+        y: 60,
+        opacity: 0,
+        rotationX: 10,
+        scale: 0.95,
+        duration: 1,
+        stagger: 0.15,
+        ease: 'power3.out'
+      });
+
+      // 1.5. Premium Section Titles Stagger Entrance (Letter-by-Letter Hologram Reveal)
+      const sectionTitles = document.querySelectorAll('h2.premium-text-gradient:not(#about-scrub)');
+      sectionTitles.forEach(title => {
+        const text = title.innerText.trim();
+        title.innerHTML = '';
+        
+        [...text].forEach(char => {
+          const span = document.createElement('span');
+          span.innerHTML = char === ' ' ? '&nbsp;' : char;
+          span.style.display = 'inline-block';
+          span.style.transformOrigin = 'bottom center';
+          title.appendChild(span);
+        });
+
+        gsap.fromTo(title.querySelectorAll('span'), 
+          { opacity: 0, y: 30, rotationX: -60, filter: 'blur(5px)' },
+          {
+            scrollTrigger: {
+              trigger: title,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse'
+            },
+            opacity: 1, y: 0, rotationX: 0, filter: 'blur(0px)',
+            duration: 0.8,
+            stagger: 0.03,
+            ease: 'back.out(1.5)',
+            overwrite: 'auto'
+          }
+        );
+      });
 
       // 2. Work Experience Pinned Scroll
       const workPinned = document.getElementById('work-pinned');
@@ -4119,8 +4420,36 @@
         );
       });
 
+      // Skill Progress Bars Fill Scale Animation
+      gsap.utils.toArray('.skill-bar').forEach(bar => {
+        gsap.to(bar, {
+          scrollTrigger: {
+            trigger: bar,
+            start: 'top 95%',
+            toggleActions: 'play none none reverse'
+          },
+          scaleX: 1,
+          duration: 1.6,
+          ease: 'power3.out'
+        });
+      });
+
+      // Contact Form Reveal
+      gsap.from('#contact .securify-card', {
+        scrollTrigger: {
+          trigger: '#contact',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        },
+        y: 60,
+        opacity: 0,
+        scale: 0.95,
+        duration: 1.2,
+        ease: 'back.out(1.5)'
+      });
+
       // 4. SINGULARITY TIER: Buttery Smooth GSAP Tilt & Glare
-      const cards = document.querySelectorAll('.securify-card');
+      const cards = document.querySelectorAll('.securify-card, .certificate-card, .project-card');
       cards.forEach(card => {
         const glare = card.querySelector('.card-glare');
         
@@ -4600,16 +4929,43 @@
       
       <div class="flex items-center gap-3 relative z-10">
         <div class="relative w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-400 to-fuchsia-500 p-0.5 shadow-lg shadow-cyan-500/30 animate-spin-slow">
-          <img src="https://ui-avatars.com/api/?name=Huu+Tri&background=0f172a&color=fff&rounded=true&bold=true" alt="Hữu Trí" class="w-full h-full rounded-full border-2 border-slate-900 object-cover animate-reverse-spin" />
-          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+          <img src="avatar.jpg" onerror="this.src='https://ui-avatars.com/api/?name=Huu+Tri&background=0f172a&color=fff&rounded=true&bold=true'" alt="Hữu Trí" class="w-full h-full rounded-full border-2 border-slate-900 object-cover animate-reverse-spin" />
+          <span id="chatbot-status-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-blue-500 border-2 border-slate-900 rounded-full animate-pulse"></span>
         </div>
         <div>
           <h4 class="text-white text-base font-extrabold leading-tight tracking-wide drop-shadow-md">HỮU TRÍ CHAT BOT</h4>
-          <p class="text-cyan-300 text-[11px] font-medium flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-400"></i> AI Agent (Công Ty 1 Người)</p>
+          <p id="chatbot-gateway-status" class="text-cyan-300 text-[10px] font-medium flex items-center gap-1"><i class="fa-solid fa-cloud animate-pulse"></i> Cloud Mode (Pollinations)</p>
           <p class="text-slate-400 text-[9px] mt-0.5 font-light tracking-widest uppercase">© Mọi bản quyền thuộc về Hữu Trí</p>
         </div>
       </div>
-      <button onclick="toggleChatbot()" class="text-slate-400 hover:text-white hover:rotate-90 transition-all duration-300 relative z-10 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <div class="flex items-center gap-1">
+        <button onclick="toggleGatewaySettings()" class="text-slate-400 hover:text-cyan-400 transition-colors relative z-10 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10" title="Cấu hình Gateway AI"><i class="fa-solid fa-gear text-sm"></i></button>
+        <button onclick="clearChatHistory()" class="text-slate-400 hover:text-red-400 transition-colors relative z-10 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10" title="Xóa lịch sử chat"><i class="fa-solid fa-trash-can text-sm"></i></button>
+        <button onclick="toggleChatbot()" class="text-slate-400 hover:text-white hover:rotate-90 transition-all duration-300 relative z-10 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+    </div>
+
+    <!-- Gateway Settings Panel (Sliding overlay) -->
+    <div id="gateway-settings-panel" class="absolute top-[80px] left-0 w-full bg-slate-950/95 border-b border-white/10 p-4 space-y-3 z-30 transform -translate-y-full opacity-0 pointer-events-none transition-all duration-300 flex flex-col font-mono text-[11px] text-slate-300">
+      <div class="flex justify-between items-center border-b border-white/5 pb-2">
+        <span class="font-bold text-cyan-400"><i class="fas fa-network-wired"></i> Cấu hình local gateway AI</span>
+        <button onclick="toggleGatewaySettings()" class="text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <label for="settings-port-input">Cổng Local Gateway:</label>
+          <input type="number" id="settings-port-input" class="w-20 bg-slate-800 border border-white/10 rounded px-1.5 py-0.5 text-center text-white outline-none" value="20128" />
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Model Name:</span>
+          <span class="text-slate-400 text-xs">gpt-4o / local</span>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="testLocalGateway()" class="flex-1 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded font-bold transition duration-200">Kiểm tra kết nối</button>
+        <button onclick="saveGatewaySettings()" class="flex-1 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-bold transition duration-200">Lưu cấu hình</button>
+      </div>
+      <div id="gateway-test-status" class="text-center font-bold"></div>
     </div>
 
     <!-- Chat Messages -->
@@ -4630,6 +4986,14 @@
       </div>
     </div>
 
+    <!-- Quick Suggestions -->
+    <div id="chatbot-suggestions" class="p-2 border-t border-slate-200 dark:border-slate-800 flex gap-2 overflow-x-auto scrollbar-hide bg-slate-50 dark:bg-slate-900/60 relative z-10 text-[10px]">
+      <button onclick="sendQuickReply('Dự án nổi bật?')" class="shrink-0 px-2.5 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500 hover:text-white transition duration-200">🚀 Projects</button>
+      <button onclick="sendQuickReply('Kỹ năng thế mạnh?')" class="shrink-0 px-2.5 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white transition duration-200">⚡ Skills</button>
+      <button onclick="sendQuickReply('Liên hệ thế nào?')" class="shrink-0 px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition duration-200">📞 Contact</button>
+      <button onclick="sendQuickReply('Mercy-OS là gì?')" class="shrink-0 px-2.5 py-1 rounded-full border border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white transition duration-200">🛡️ Mercy-OS</button>
+    </div>
+
     <!-- Chat Input -->
     <div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
       <form id="chatbot-form" onsubmit="handleChatSubmit(event)" class="relative">
@@ -4643,8 +5007,11 @@
 
 <script>
     /* ─── CHATBOT WIDGET LOGIC ─── */
+    /* ─── CHATBOT WIDGET LOGIC ─── */
+    /* ─── CHATBOT WIDGET LOGIC ─── */
     let isChatOpen = false;
     let activeGateway = null; // Cấu hình OmniRoute / 9Router
+    let chatHistory = JSON.parse(localStorage.getItem('mercy_chat_history')) || [];
     const chatbotWindow = document.getElementById('chatbot-window');
     const chatbotMessages = document.getElementById('chatbot-messages');
     const chatbotInput = document.getElementById('chatbot-input');
@@ -4662,9 +5029,8 @@
     // Tự động kiểm tra Local Gateway & Tự động bật chatbot sau khi trang load xong 1.5 giây
     window.addEventListener('DOMContentLoaded', async () => {
       activeGateway = await detectGateway();
-      if (activeGateway) {
-        console.log(`[AI GATEWAY] Connected to local ${activeGateway.name} on port ${activeGateway.port}`);
-      }
+      updateGatewayUI();
+      loadChatHistory();
       setTimeout(() => {
         if (!isChatOpen) {
           toggleChatbot();
@@ -4673,25 +5039,158 @@
     });
 
     async function detectGateway() {
-      const ports = [20128, 9090]; // 20128: OmniRoute, 9090: 9Router
+      // Đọc port đã cấu hình trong localStorage nếu có
+      const configuredPort = localStorage.getItem('mercy_gateway_port');
+      const ports = configuredPort ? [parseInt(configuredPort), 20128, 9090] : [20128, 9090];
+      
       for (let port of ports) {
         try {
           const res = await fetch(`http://127.0.0.1:${port}/v1/models`, { method: 'GET' });
           if (res.ok) {
-            return { port, name: port === 20128 ? 'OmniRoute' : '9Router' };
+            return { port, name: port === 20128 ? 'OmniRoute' : port === 9090 ? '9Router' : 'Local Gateway' };
           }
         } catch (e) {}
       }
       return null;
     }
 
-    function appendMessage(text, sender) {
+    function updateGatewayUI() {
+      const statusDot = document.getElementById('chatbot-status-dot');
+      const statusText = document.getElementById('chatbot-gateway-status');
+      const portInput = document.getElementById('settings-port-input');
+      
+      if (activeGateway) {
+        if (statusDot) {
+          statusDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full animate-ping";
+          // Tạo một dot tĩnh đè lên sau
+          setTimeout(() => {
+            if (statusDot.parentNode && !document.getElementById('status-dot-static')) {
+              const dotStatic = document.createElement('span');
+              dotStatic.id = 'status-dot-static';
+              dotStatic.className = "absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full";
+              statusDot.parentNode.appendChild(dotStatic);
+            }
+          }, 50);
+        }
+        if (statusText) {
+          statusText.className = "text-emerald-400 text-[10px] font-medium flex items-center gap-1";
+          statusText.innerHTML = `<i class="fa-solid fa-circle text-[8px] animate-pulse"></i> ${activeGateway.name} Active (${activeGateway.port})`;
+        }
+        if (portInput) {
+          portInput.value = activeGateway.port;
+        }
+      } else {
+        if (statusDot) {
+          statusDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 bg-blue-500 border-2 border-slate-900 rounded-full animate-pulse";
+          const dotStatic = document.getElementById('status-dot-static');
+          if (dotStatic) dotStatic.remove();
+        }
+        if (statusText) {
+          statusText.className = "text-cyan-300 text-[10px] font-medium flex items-center gap-1";
+          statusText.innerHTML = `<i class="fa-solid fa-cloud animate-pulse"></i> Cloud Mode (Pollinations)`;
+        }
+      }
+    }
+
+    let isSettingsOpen = false;
+    function toggleGatewaySettings() {
+      const panel = document.getElementById('gateway-settings-panel');
+      if (!panel) return;
+      isSettingsOpen = !isSettingsOpen;
+      if (isSettingsOpen) {
+        panel.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-full');
+      } else {
+        panel.classList.add('opacity-0', 'pointer-events-none', '-translate-y-full');
+        document.getElementById('gateway-test-status').innerHTML = '';
+      }
+    }
+
+    async function testLocalGateway() {
+      const portInput = document.getElementById('settings-port-input');
+      const statusDiv = document.getElementById('gateway-test-status');
+      if (!portInput || !statusDiv) return;
+      
+      const port = parseInt(portInput.value);
+      statusDiv.className = "text-center text-yellow-400 font-bold";
+      statusDiv.innerText = "Đang kết nối...";
+      
+      try {
+        const res = await fetch(`http://127.0.0.1:${port}/v1/models`, { method: 'GET' });
+        if (res.ok) {
+          statusDiv.className = "text-center text-emerald-400 font-bold";
+          statusDiv.innerText = "Kết nối thành công! Cổng khả dụng.";
+        } else {
+          throw new Error("Port not responding properly");
+        }
+      } catch (e) {
+        statusDiv.className = "text-center text-red-400 font-bold";
+        statusDiv.innerText = "Kết nối thất bại. Vui lòng kiểm tra lại.";
+      }
+    }
+
+    function saveGatewaySettings() {
+      const portInput = document.getElementById('settings-port-input');
+      const statusDiv = document.getElementById('gateway-test-status');
+      if (!portInput || !statusDiv) return;
+      
+      const port = parseInt(portInput.value);
+      localStorage.setItem('mercy_gateway_port', port);
+      
+      statusDiv.className = "text-center text-cyan-400 font-bold";
+      statusDiv.innerText = "Đã lưu! Đang tải lại cổng...";
+      
+      setTimeout(async () => {
+        activeGateway = await detectGateway();
+        updateGatewayUI();
+        toggleGatewaySettings();
+        appendMessage(`Hệ thống đã kết nối lại cổng gateway AI thủ công tại cổng ${port}. Chế độ tối ưu hóa đã được kích hoạt.`, 'bot');
+      }, 800);
+    }
+
+    function sendQuickReply(text) {
+      chatbotInput.value = text;
+      const form = document.getElementById('chatbot-form');
+      if (form) {
+        const event = new Event('submit', { cancelable: true });
+        form.dispatchEvent(event);
+      }
+    }
+
+    function clearChatHistory() {
+      chatHistory = [];
+      localStorage.removeItem('mercy_chat_history');
+      chatbotMessages.innerHTML = `
+        <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent to-slate-100/30 dark:to-slate-900/30"></div>
+        <div class="flex gap-3 relative z-10 animate-fade-in-up">
+          <div class="shrink-0 mt-auto">
+            <div class="relative w-8 h-8 rounded-full shadow-lg border border-cyan-400/50 bg-gradient-to-tr from-cyan-500 to-indigo-500 flex items-center justify-center animate-pulse">
+              <span class="text-[10px] font-bold text-white drop-shadow-md">HT</span>
+            </div>
+          </div>
+          <div class="bg-white/10 dark:bg-slate-900/40 border border-cyan-500/30 text-slate-800 dark:text-cyan-50 text-sm p-4 rounded-2xl rounded-bl-sm shadow-[0_5px_15px_rgba(6,182,212,0.2)] max-w-[85%] leading-relaxed backdrop-blur-md relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-cyan-400/10 to-fuchsia-500/10 pointer-events-none rounded-2xl rounded-bl-sm"></div>
+            Lịch sử đã được xóa. Chào bạn, bạn cần hỗ trợ gì ạ?
+          </div>
+        </div>
+      `;
+    }
+
+    function loadChatHistory() {
+      if (chatHistory.length > 0) {
+        chatbotMessages.innerHTML = '<div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent to-slate-100/30 dark:to-slate-900/30"></div>';
+        chatHistory.forEach(msg => {
+          appendMessage(msg.text, msg.sender, false);
+        });
+      }
+    }
+
+    function appendMessage(text, sender, saveToStorage = true) {
       const msgDiv = document.createElement('div');
       msgDiv.className = sender === 'user' ? 'flex gap-3 relative z-10 justify-end' : 'flex gap-3 relative z-10';
       
       let avatar = sender === 'user' 
         ? `<img src="https://ui-avatars.com/api/?name=User&background=000&color=fff" class="w-8 h-8 rounded-full shadow-sm" alt="User" />`
-        : `<img src="https://ui-avatars.com/api/?name=AI&background=4f46e5&color=fff" class="w-8 h-8 rounded-full shadow-sm" alt="Bot" />`;
+        : `<img src="avatar.jpg" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4f46e5&color=fff'" class="w-8 h-8 rounded-full shadow-sm object-cover" alt="Bot" />`;
 
       let bubbleClass = sender === 'user'
         ? `bg-gradient-to-br from-indigo-500 to-fuchsia-600 text-white text-xs p-3.5 rounded-2xl rounded-tr-sm shadow-[0_5px_15px_rgba(99,102,241,0.4)] max-w-[80%] leading-relaxed`
@@ -4703,6 +5202,11 @@
 
       chatbotMessages.appendChild(msgDiv);
       chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+      if (saveToStorage) {
+        chatHistory.push({ text, sender });
+        localStorage.setItem('mercy_chat_history', JSON.stringify(chatHistory));
+      }
     }
 
     function appendTypingIndicator() {
@@ -4711,7 +5215,7 @@
       msgDiv.id = id;
       msgDiv.className = 'flex gap-3 relative z-10';
       msgDiv.innerHTML = `
-        <img src="https://ui-avatars.com/api/?name=AI&background=4f46e5&color=fff" class="w-8 h-8 rounded-full shadow-sm" alt="Bot" />
+        <img src="avatar.jpg" onerror="this.src='https://ui-avatars.com/api/?name=AI&background=4f46e5&color=fff'" class="w-8 h-8 rounded-full shadow-sm object-cover" alt="Bot" />
         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-1 h-10">
           <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
           <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
@@ -4746,7 +5250,7 @@
               role: 'system', 
               content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack trình độ Giáo sư/Tiến sĩ. 
 Hãy xưng hô là "Triều Hí" hoặc "team" và gọi người dùng là "sếp". Trả lời ngắn gọn (1-3 câu), lịch sự, chuyên nghiệp bằng tiếng Việt.
-Hỗ trợ giải đáp các thắc mắc về năng lực của anh Võ Hữu Trí (Web developer chuyên nghiệp, Fullstack, bảo mật, hệ thống tự động hóa).` 
+Hỗ trợ giải đáp các thắc mắc về năng lực của anh Võ Hữu Trí (Web developer chuyên nghiệp, Fullstack, bảo mật, hệ thống tự động hóa, Mercy-OS hacker console).` 
             },
             { role: 'user', content: text }
           ]
@@ -4801,7 +5305,5 @@ Hỗ trợ giải đáp các thắc mắc về năng lực của anh Võ Hữu T
       }
     }
   </script>
-</body>
-</script>
 </body>
 </html>

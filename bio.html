@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Võ Hữu Trí | Bio Portal</title>
+  <meta name="description" content="Trang liên kết chính thức của Võ Hữu Trí — Fullstack Web Developer." />
+  
+  <!-- CDNs cho Fonts, Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <!-- GSAP & Canvas Confetti -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style>
+    /* ─── GOD TIER CUSTOM CURSOR ─── */
+    * { cursor: none !important; }
+    .god-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 16px; height: 16px;
+      border: 2px solid #06b6d4;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background-color 0.2s;
+      mix-blend-mode: difference;
+    }
+    .god-cursor.hovering {
+      width: 40px; height: 40px;
+      background-color: rgba(6, 182, 212, 0.2);
+    }
+
+    body {
+      background-color: #0b1121 !important;
+      color: #f8fafc !important;
+      font-family: 'Outfit', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .aurora-mesh-bg {
+      position: fixed; inset: -20%;
+      z-index: 1; pointer-events: none;
+      background-color: #0b1121;
+      background-image: 
+        radial-gradient(at 20% 30%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 20%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
+        radial-gradient(at 90% 80%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+      animation: mesh-rotate 25s infinite alternate linear;
+    }
+    @keyframes mesh-rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(10deg) scale(1.1); }
+    }
+
+    .securify-card {
+      background: rgba(15, 23, 42, 0.6) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .securify-card:hover {
+      box-shadow: 0 20px 40px -10px rgba(6, 182, 212, 0.25), 0 0 20px 2px rgba(6, 182, 212, 0.1) inset;
+      border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    /* 3D Spotlight */
+    .securify-card::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 50%);
+      opacity: 0; transition: opacity 0.3s;
+      pointer-events: none; border-radius: inherit;
+    }
+    .securify-card:hover::after { opacity: 1; }
+    
+    /* Neon Glow Border */
+    .securify-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(45deg, rgba(6,182,212,0.6), rgba(16,185,129,0.6), rgba(6,182,212,0.6));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .securify-card:hover::before { opacity: 1; }
+
+    .securify-card .glare {
+      position: absolute;
+      top: 0; left: 0; width: 200%; height: 200%;
+      background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.08) 25%, transparent 30%);
+      pointer-events: none;
+      transform: translate(-100%, -100%);
+      transition: transform 0.1s linear;
+      z-index: 20;
+    }
+
+    .avatar-glow {
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+      border: 3px solid rgba(6, 182, 212, 0.6);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between py-12 px-4 z-10">
+  <!-- Interactive Background Grid & Aurora Mesh -->
+  <div class="aurora-mesh-bg"></div>
+  <div class="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none z-0"></div>
+
+  <!-- Custom Cursor -->
+  <div class="god-cursor hidden md:block" id="custom-cursor"></div>
+
+  <!-- Main Container -->
+  <main class="w-full max-w-md mx-auto z-10 space-y-8 flex-1 flex flex-col justify-center">
+    
+    <!-- Profile Card (Avatar & Info) -->
+    <div class="text-center space-y-4 entry-animation">
+      <div class="relative w-28 h-28 mx-auto rounded-full overflow-hidden avatar-glow hover:scale-105 transition-transform duration-500 cursor-pointer" onclick="triggerConfetti()">
+        <img src="avatar.jpg" onerror="this.src='https://picsum.photos/seed/hacker/300/300'" class="w-full h-full object-cover" alt="Võ Hữu Trí" />
+      </div>
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-300">Võ Hữu Trí</h1>
+        <p class="text-sm font-mono text-cyan-400 mt-1.5 uppercase tracking-widest">// Fullstack Developer</p>
+        <p class="text-xs text-slate-400 max-w-xs mx-auto mt-2 leading-relaxed">IT Student @ University of Science. Xây dựng trải nghiệm Web an toàn, hiệu năng cao và điện ảnh.</p>
+      </div>
+    </div>
+
+    <!-- Link Buttons Bento Column -->
+    <div class="space-y-4 entry-animation-delayed">
+      
+      <!-- Link: Portfolio -->
+      <a href="index.html" class="securify-card block p-4 rounded-xl flex items-center justify-between group cursor-pointer">
+        <div class="glare"></div>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-globe text-lg"></i>
+          </div>
+          <div class="text-left">
+            <span class="block text-sm font-bold text-white">🌐 Portfolio Chính Thức</span>
+            <span class="block text-[10px] font-mono text-slate-400 mt-0.5">// Explore my 3D Universe</span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right text-xs text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all duration-300"></i>
+      </a>
+
+      <!-- Link: GearVN Clone -->
+      <a href="gearvn.html" class="securify-card block p-4 rounded-xl flex items-center justify-between group cursor-pointer">
+        <div class="glare"></div>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-shopping-cart text-lg"></i>
+          </div>
+          <div class="text-left">
+            <span class="block text-sm font-bold text-white">🛒 Dự Án Clone GearVN E-Commerce</span>
+            <span class="block text-[10px] font-mono text-slate-400 mt-0.5">// Scalable interaction & UI design</span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right text-xs text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all duration-300"></i>
+      </a>
+
+      <!-- Link: GitHub -->
+      <a href="https://github.com/Mercy222222" target="_blank" class="securify-card block p-4 rounded-xl flex items-center justify-between group cursor-pointer">
+        <div class="glare"></div>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform duration-300">
+            <i class="fab fa-github text-lg"></i>
+          </div>
+          <div class="text-left">
+            <span class="block text-sm font-bold text-white">🐱 GitHub Repository</span>
+            <span class="block text-[10px] font-mono text-slate-400 mt-0.5">// Open Source Code & Projects</span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right text-xs text-slate-500 group-hover:text-violet-400 group-hover:translate-x-1 transition-all duration-300"></i>
+      </a>
+
+      <!-- Link: Zalo -->
+      <a href="https://zalo.me/0979324949" target="_blank" class="securify-card block p-4 rounded-xl flex items-center justify-between group cursor-pointer">
+        <div class="glare"></div>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-comment-dots text-lg"></i>
+          </div>
+          <div class="text-left">
+            <span class="block text-sm font-bold text-white">💬 Nhắn Tin Zalo</span>
+            <span class="block text-[10px] font-mono text-slate-400 mt-0.5">// Hotline: 0979 324 949</span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right text-xs text-slate-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all duration-300"></i>
+      </a>
+
+      <!-- Link: Email -->
+      <a href="mailto:huutri.user@gmail.com" class="securify-card block p-4 rounded-xl flex items-center justify-between group cursor-pointer">
+        <div class="glare"></div>
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform duration-300">
+            <i class="fas fa-envelope text-lg"></i>
+          </div>
+          <div class="text-left">
+            <span class="block text-sm font-bold text-white">📬 Gửi Email Trực Tiếp</span>
+            <span class="block text-[10px] font-mono text-slate-400 mt-0.5">// huutri.user@gmail.com</span>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right text-xs text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all duration-300"></i>
+      </a>
+
+    </div>
+
+  </main>
+
+  <!-- Animated Bottom Footer / QR Code -->
+  <footer class="w-full text-center z-10 font-mono text-[10px] text-slate-500 pt-8 uppercase tracking-widest">
+    © 2026 Võ Hữu Trí // Secure bio link portal
+  </footer>
+
+  <!-- ─── INTEGRATED MINI AI ASSISTANT WIDGET ─── -->
+  <!-- Chatbot Trigger Button -->
+  <button id="chatbot-trigger" onclick="toggleChatbot()" class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-500 to-emerald-500 shadow-[0_0_20px_rgba(6,182,212,0.4)] flex items-center justify-center text-white text-lg z-50 hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] active:scale-95 transition-all duration-300">
+    <i class="fas fa-robot animate-pulse"></i>
+  </button>
+
+  <!-- Chatbot Window -->
+  <div id="chatbot-window" class="fixed bottom-22 right-6 w-80 h-[420px] securify-card rounded-xl shadow-[0_0_40px_rgba(6,182,212,0.3)] z-50 flex flex-col overflow-hidden transform translate-y-8 opacity-0 pointer-events-none transition-all duration-500">
+    <!-- Header -->
+    <div class="h-12 bg-slate-900/90 border-b border-white/5 flex items-center justify-between px-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-xs font-mono text-cyan-400 uppercase tracking-widest">Triều Hí AI // Agent</span>
+      </div>
+      <button onclick="toggleChatbot()" class="text-slate-500 hover:text-white text-xs transition-colors"><i class="fas fa-times"></i></button>
+    </div>
+    <!-- Messages Body -->
+    <div id="chatbot-messages" class="flex-1 overflow-y-auto p-4 space-y-3.5 flex flex-col">
+      <div class="flex gap-2.5">
+        <img src="https://ui-avatars.com/api/?name=AI&background=4f46e5&color=fff" class="w-6 h-6 rounded-full" alt="Bot" />
+        <div class="bg-slate-900/80 border border-cyan-500/20 text-cyan-50 text-[11px] p-2.5 rounded-lg rounded-tl-none max-w-[80%] leading-relaxed">
+          Chào sếp! Team Triều Hí đã sẵn sàng hỗ trợ. Sếp cần tìm hiểu thông tin nào của anh Trí ạ?
+        </div>
+      </div>
+    </div>
+    <!-- Input Form -->
+    <form onsubmit="handleChatSubmit(event)" class="h-12 border-t border-white/5 flex items-stretch">
+      <input type="text" id="chatbot-input" class="flex-1 bg-transparent px-4 text-xs text-white placeholder-slate-500 outline-none font-mono" placeholder="Gõ tin nhắn..." autocomplete="off" />
+      <button type="submit" class="px-4 text-cyan-400 hover:text-white transition-colors text-xs"><i class="fas fa-paper-plane"></i></button>
+    </form>
+  </div>
+
+  <!-- Audio Context Setup -->
+  <script>
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+    function playTick() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.02);
+      } catch (e) {}
+    }
+  </script>
+
+  <!-- Interactive Scripts (GSAP, Custom Cursor, 3D Tilt, Chatbot API) -->
+  <script>
+    let activeGateway = null;
+    let isChatOpen = false;
+    const chatbotWindow = document.getElementById('chatbot-window');
+    const chatbotMessages = document.getElementById('chatbot-messages');
+    const chatbotInput = document.getElementById('chatbot-input');
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 0. Detect Local AI Gateway
+      activeGateway = await detectGateway();
+      if (activeGateway) {
+        console.log(`[AI GATEWAY] Connected to local ${activeGateway.name} on port ${activeGateway.port}`);
+      }
+
+      // 1. Entrance Stagger Animation
+      gsap.from('.entry-animation > div, .entry-animation h1, .entry-animation p', {
+        y: 30, opacity: 0, duration: 1, stagger: 0.15, ease: 'power3.out'
+      });
+      gsap.from('.entry-animation-delayed > a', {
+        y: 40, opacity: 0, duration: 1, stagger: 0.1, ease: 'power3.out', delay: 0.4
+      });
+
+      // 2. Custom Cursor Movement
+      const cursor = document.getElementById('custom-cursor');
+      if (cursor) {
+        document.addEventListener('mousemove', e => {
+          cursor.style.left = e.clientX + 'px';
+          cursor.style.top = e.clientY + 'px';
+        });
+
+        // Hover states on links
+        document.querySelectorAll('a, button, .avatar-glow').forEach(el => {
+          el.addEventListener('mouseenter', () => {
+            cursor.classList.add('hovering');
+            playTick();
+          });
+          el.addEventListener('mouseleave', () => {
+            cursor.classList.remove('hovering');
+          });
+        });
+      }
+
+      // 3. 3D Tilt for Link Cards
+      init3DTilt();
+    });
+
+    async function detectGateway() {
+      const ports = [20128, 9090];
+      for (let port of ports) {
+        try {
+          const res = await fetch(`http://127.0.0.1:${port}/v1/models`, { method: 'GET' });
+          if (res.ok) {
+            return { port, name: port === 20128 ? 'OmniRoute' : '9Router' };
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    function triggerConfetti() {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+
+    function toggleChatbot() {
+      isChatOpen = !isChatOpen;
+      if (isChatOpen) {
+        chatbotWindow.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-8');
+        chatbotInput.focus();
+      } else {
+        chatbotWindow.classList.add('opacity-0', 'pointer-events-none', 'translate-y-8');
+      }
+    }
+
+    function appendChatMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = sender === 'user' ? 'flex justify-end gap-2.5' : 'flex gap-2.5';
+      
+      let avatar = sender === 'user'
+        ? `<img src="https://ui-avatars.com/api/?name=User&background=000&color=fff" class="w-6 h-6 rounded-full" alt="User" />`
+        : `<img src="https://ui-avatars.com/api/?name=AI&background=4f46e5&color=fff" class="w-6 h-6 rounded-full" alt="Bot" />`;
+
+      let bubbleClass = sender === 'user'
+        ? `bg-gradient-to-br from-indigo-500 to-fuchsia-600 text-white text-[11px] p-2.5 rounded-lg rounded-tr-none max-w-[80%] leading-relaxed`
+        : `bg-slate-900/80 border border-cyan-500/20 text-cyan-50 text-[11px] p-2.5 rounded-lg rounded-tl-none max-w-[80%] leading-relaxed`;
+
+      msgDiv.innerHTML = sender === 'user'
+        ? `<div class="${bubbleClass}">${text}</div>${avatar}`
+        : `${avatar}<div class="${bubbleClass}">${text}</div>`;
+
+      chatbotMessages.appendChild(msgDiv);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    async function handleChatSubmit(e) {
+      e.preventDefault();
+      const text = chatbotInput.value.trim();
+      if (!text) return;
+
+      appendChatMessage(text, 'user');
+      chatbotInput.value = '';
+
+      // Typing state
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'text-[9px] text-cyan-400/70 font-mono animate-pulse pl-8';
+      typingIndicator.innerText = "Connecting to agent...";
+      chatbotMessages.appendChild(typingIndicator);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+      try {
+        let url = 'https://text.pollinations.ai/';
+        let bodyObj = {
+          messages: [
+            { 
+              role: 'system', 
+              content: `Bạn là Triều Hí, leader của Biệt đội 10 chuyên gia Fullstack trình độ Giáo sư/Tiến sĩ. 
+Hãy xưng hô là "Triều Hí" hoặc "team" và gọi người dùng là "sếp". Trả lời cực kỳ ngắn gọn (1-2 câu), lịch sự, chuyên nghiệp bằng tiếng Việt.` 
+            },
+            { role: 'user', content: text }
+          ]
+        };
+
+        if (activeGateway) {
+          url = `http://127.0.0.1:${activeGateway.port}/v1/chat/completions`;
+          bodyObj.model = 'gpt-4o';
+        }
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyObj)
+        });
+        
+        typingIndicator.remove();
+        
+        if (response.ok) {
+          let replyText = "";
+          if (activeGateway) {
+            const parsed = await response.json();
+            replyText = parsed.choices[0].message.content.trim();
+          } else {
+            replyText = await response.text();
+          }
+          appendChatMessage(replyText, 'bot');
+        } else {
+          throw new Error('API Error');
+        }
+      } catch (error) {
+        typingIndicator.remove();
+        appendChatMessage("Xin lỗi sếp, mạng kết nối AI bị nghẽn. Sếp có thể liên hệ trực tiếp qua số Zalo 0979 324 949 nhé ạ!", 'bot');
+      }
+    }
+
+    function init3DTilt() {
+      const cards = document.querySelectorAll('.securify-card');
+      cards.forEach(card => {
+        const parent = card.parentElement;
+        if (parent) parent.style.perspective = '1000px';
+
+        card.style.transformStyle = 'preserve-3d';
+        
+        let glare = card.querySelector('.glare');
+        let rect = card.getBoundingClientRect();
+        
+        const xTo = gsap.quickTo(card, "rotationY", {duration: 0.6, ease: "power3.out"});
+        const yTo = gsap.quickTo(card, "rotationX", {duration: 0.6, ease: "power3.out"});
+        const scaleTo = gsap.quickTo(card, "scale", {duration: 0.6, ease: "power3.out"});
+        const glareXTo = glare ? gsap.quickTo(glare, "xPercent", {duration: 0.4, ease: "power2.out"}) : null;
+        const glareYTo = glare ? gsap.quickTo(glare, "yPercent", {duration: 0.4, ease: "power2.out"}) : null;
+
+        card.addEventListener('mousemove', e => {
+          rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          
+          const tiltX = ((y - centerY) / centerY) * -12; 
+          const tiltY = ((x - centerX) / centerX) * 12;
+          
+          xTo(tiltY);
+          yTo(tiltX);
+          scaleTo(1.02);
+          
+          if (glare) {
+            const percentageX = (x / rect.width) * 100 - 50;
+            const percentageY = (y / rect.height) * 100 - 50;
+            glareXTo(percentageX);
+            glareYTo(percentageY);
+          }
+          
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          xTo(0);
+          yTo(0);
+          scaleTo(1);
+          if (glare) {
+            glareXTo(0);
+            glareYTo(0);
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
