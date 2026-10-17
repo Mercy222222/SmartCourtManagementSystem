@@ -23,7 +23,7 @@
 
 ---
 
-## 🛠️ Danh Mục 20 Kỹ Năng Đã Kích Hoạt Trong `.agents/skills/`
+## 🛠️ Danh Mục 21 Kỹ Năng Đã Kích Hoạt Trong `.agents/skills/`
 
 1. **`10-member-expert-fleet`**: Bộ quy tắc phối hợp tác chiến của 10 chuyên gia cấp Giáo sư/Tiến sĩ.
 2. **`agent-engineering`**: Kỹ thuật thiết kế và triển khai AI Agents tự hành chuẩn công nghiệp.
@@ -36,15 +36,16 @@
 9. **`frontend-nextjs`**: Xây dựng ứng dụng Next.js hiện đại, App Router, SSR/SSG.
 10. **`graphify`**: Knowledge Graph indexing và biểu diễn kiến trúc dự án.
 11. **`headroom`**: Nén ngữ cảnh thông minh, tối ưu 60-95% token prompt.
-12. **`orchestrator`**: Workflow quản lý tác vụ chuẩn mực.
-13. **`orchestrator-growth`**: Định hướng tăng trưởng sản phẩm và marketing automation.
-14. **`orchestrator-next`**: Tối ưu hóa chu trình phát triển Next.js cao cấp.
-15. **`python-testing`**: Bộ công cụ kiểm thử Python toàn diện với Pytest và Mocking.
-16. **`qa-e2e-testing`**: Kiểm thử tự động giao diện End-to-End với Playwright.
-17. **`quant-finance`**: Mô hình định lượng tài chính, phân tích kỹ thuật và định giá chứng khoán.
-18. **`quant-orchestrator`**: Vận hành hệ thống giao dịch thuật toán và quỹ AI Hedge Fund.
-19. **`ui-frontend`**: Kiến tạo giao diện thẩm mỹ cao, micro-animations và responsive layout.
-20. **`web-deploy`**: Tự động hóa triển khai web an toàn, zero-downtime.
+12. **`mobile-app-engineering`**: Phát triển ứng dụng Mobile toàn cầu (React Native/Expo, Flutter, Clean Arch + MVI, Offline-First, VNPay/MoMo, Push Notifications, Đồ án chuyên ngành A+).
+13. **`orchestrator`**: Workflow quản lý tác vụ chuẩn mực.
+14. **`orchestrator-growth`**: Định hướng tăng trưởng sản phẩm và marketing automation.
+15. **`orchestrator-next`**: Tối ưu hóa chu trình phát triển Next.js cao cấp.
+16. **`python-testing`**: Bộ công cụ kiểm thử Python toàn diện với Pytest và Mocking.
+17. **`qa-e2e-testing`**: Kiểm thử tự động giao diện End-to-End với Playwright.
+18. **`quant-finance`**: Mô hình định lượng tài chính, phân tích kỹ thuật và định giá chứng khoán.
+19. **`quant-orchestrator`**: Vận hành hệ thống giao dịch thuật toán và quỹ AI Hedge Fund.
+20. **`ui-frontend`**: Kiến tạo giao diện thẩm mỹ cao, micro-animations và responsive layout.
+21. **`web-deploy`**: Tự động hóa triển khai web an toàn, zero-downtime.
 
 ---
 

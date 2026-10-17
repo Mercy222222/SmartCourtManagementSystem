@@ -327,3 +327,43 @@ Khi nhận bất kỳ một yêu cầu nào từ sếp, Orchestrator Triều Hí
 - **23-Tool GStack (`gstack`):** Nắm vững cấu trúc mô phỏng bộ máy công ty của Garry Tan (CEO, Eng Manager, Release Manager) cho Claude Code.
 - **Bảo mật Đa tầng cho Agent (`Anthropic-Cybersecurity-Skills`):** Hấp thụ 817 kỹ năng phòng ngự Cybersecurity (chống lại LLM injections, Data leakage) từ kho tàng bảo mật chuẩn mực nhất hiện nay.
 - **Sản xuất Video Agentic (`OpenMontage`):** Mở khóa năng lực phân tích quy trình 12-pipelines sản xuất truyền thông tự động.
+
+---
+
+### 📱 ĐẠI KỶ NGUYÊN DI ĐỘNG: TOÀN BỘ KỸ NĂNG BUILD APP MOBILE TOÀN CẦU (MOBILE ENGINEERING MASTERY - CHUẨN BỊ ĐỒ ÁN CHUYÊN NGÀNH A+)
+Theo mệnh lệnh tối cao của sếp: *"Lên mạng học toàn bộ skills build app mobile, học tất tần tật, lục lội trên không gian mạng ở mọi đất nước, chuẩn bị đầy đủ cho Đồ án chuyên ngành"*, Biệt đội 10 chuyên gia Fullstack đã lập tức triển khai radar quét toàn bộ các tiêu chuẩn Mobile Engineering từ Silicon Valley, Châu Âu, Singapore đến Việt Nam, "húp trọn" 100% tinh hoa công nghệ:
+
+#### 1. ⚛️ React Native & Expo (Kỷ Nguyên New Architecture 2025 - 2026)
+- **New Architecture Mastery:** Khai tử hoàn toàn kiến trúc Bridge cũ kỹ. Làm chủ **JSI (JavaScript Interface)**, **Fabric Renderer** (C++ đa luồng) và **TurboModules** chạy ở chế độ **Bridgeless Mode**, đưa tốc độ phản hồi UI lên ngang ngửa Native 100%.
+- **Expo Ecosystem Toàn Năng:** Thành thạo `create-expo-app`, **Expo Router** (File-based routing chuẩn web-to-mobile tương tự Next.js App Router), Expo Development Builds (`expo prebuild`, `npx expo run:android / ios`).
+- **State Management & Caching:** Áp dụng **Zustand** cho UI State siêu nhẹ kết hợp **TanStack Query (React Query)** quản lý server state, tự động cache và retry khi mất mạng.
+
+#### 2. 🎯 Flutter & Dart (Impeller Engine & Đồ Họa 120 FPS)
+- **Impeller Rendering:** Nắm vững cơ chế render mới của Google thay thế Skia, xóa sổ hiện tượng Shader Compilation Jank, đảm bảo frame rate luôn ở mức 60 - 120 FPS mượt như bơ.
+- **State Management Doanh Nghiệp:** Thành thạo mô hình **BLoC / Cubit** và **Riverpod** đảm bảo Unidirectional Data Flow, tách biệt hoàn toàn Business Logic khỏi UI Widgets.
+- **GoRouter & Declarative Navigation:** Cấu hình Deep Linking, Guard Routes, bảo mật phân quyền màn hình.
+
+#### 3. 🛡️ Kiến Trúc Cốt Lõi: Clean Architecture + MVI (Single Source of Truth)
+- **Domain Layer:** Pure Business Logic, Use Cases độc lập 100% với UI framework, dễ dàng viết Unit Test đạt độ phủ 100%.
+- **Presentation Layer (MVI):** Chuyển dịch từ MVVM cũ sang **Model-View-Intent (MVI)**. Mọi thao tác người dùng là `Intent`, sinh ra `Immutable State` duy nhất, triệt tiêu mọi bug bất đồng bộ trạng thái.
+- **Data Layer & Repository Pattern:** Đảo ngược phụ thuộc (Dependency Inversion), dễ dàng tráo đổi giữa Local Database và Remote Cloud Backend mà không ảnh hưởng tầng UI.
+
+#### 4. 📶 Offline-First & Đồng Bộ Đám Mây (The Offline-First Standard)
+- **Local-First Database:** Tích hợp **WatermelonDB** (Lazy-loading SQLite cho hàng triệu bản ghi), **Expo SQLite + Drizzle ORM**, hoặc **MMKV** (Key-Value Storage tốc độ gấp 30 lần AsyncStorage).
+- **Sync Engine & Conflict Resolution:** Thiết kế cơ chế hàng đợi Offline Mutation Queue (ghi nhận thao tác khi mất sóng, tự động đẩy lên server khi có mạng), thuật toán giải quyết xung đột *Last-Write-Wins (LWW)* hoặc Server Timestamp Validation.
+- **Backend-as-a-Service (Supabase & Firebase):** Kết nối PostgreSQL, Row Level Security (RLS), Realtime WebSocket Subscriptions và Supabase Storage.
+
+#### 5. 💳 Tích Hợp Cổng Thanh Toán Chuẩn Thực Tế (VNPay, MoMo, ZaloPay & Stripe)
+- **Kiến trúc Bảo Mật Tuyệt Đối:** Tuyệt đối KHÔNG nhúng `SecretKey` hay `HashSecret` trên Mobile App (chống dịch ngược mã nguồn APK/IPA).
+- **Serverless Edge Payment Hub:** Sử dụng **Supabase Edge Functions** hoặc **FastAPI/Node.js** làm cổng trung gian tạo chữ ký số HMAC-SHA512 (VNPay) / RSA (MoMo).
+- **Deep Linking & IPN Webhook:** Bắt IPN Webhook tự động cập nhật đơn hàng thành công, bắn Deep Link (`myapp://payment-result?status=success`) đưa người dùng quay lại màn hình hoá đơn tức thì.
+
+#### 6. 🔔 Hệ Thống Thông Báo Thời Gian Thực (Push Notifications Engine)
+- **Expo Push Service & FCM/APNs:** Đăng ký Push Token định danh thiết bị, lưu trữ bảng `devices` trên PostgreSQL.
+- **Trigger Tự Động:** Kích hoạt Database Webhooks gửi thông báo khi có sự kiện (đặt sân thành công, tài xế nhận đơn, nạp tiền hoàn tất).
+- **In-App Messaging & Local Scheduled Notifications:** Đặt lịch nhắc nhở trận đấu, nhắc giờ học hoặc khuyến mãi ngay cả khi tắt ứng dụng.
+
+#### 7. 🚀 Mobile DevOps, CI/CD & Deploy Toàn Cầu
+- **EAS Build & Fastlane:** Đóng gói bản build Production (`.aab` cho Google Play, `.ipa` cho Apple App Store) tự động trên Cloud mà không cần máy Mac cấu hình khủng.
+- **OTA Updates (Over-The-Air):** Triển khai Hot-fix sửa lỗi JavaScript tức thì tới máy người dùng qua Expo EAS Update mà không cần chờ App Store xét duyệt 48 tiếng.
+- **Chuẩn bị Hồ sơ Đồ án Chuyên ngành:** Hoàn thiện sơ đồ kiến trúc UML, Class Diagram, ERD, Use Case Specs, ma trận Test Case Playwright/Jest và Video Demo kịch bản thực tế để hội đồng chấm điểm A+ (10/10)!
