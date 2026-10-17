@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Infinity Padel",
-    "slug": "infinity-padel",
+    "name": "Smart Court Management System",
+    "slug": "smart-court-management-system",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "infinitypadel",
+    "scheme": "smartcourt",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {

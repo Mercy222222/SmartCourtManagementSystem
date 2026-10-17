@@ -18,7 +18,7 @@ Tại thư mục cha `c:\Users\pc\.gemini\antigravity-ide\scratch\`, hiện ch�
 
 ```
 SmartCourtManagementSystem/
-├── infinity-padel-mobile/                   # Ứng dụng Di Động Mobile Padel & Smart Court (React Native / Expo)
+├── SmartCourtManagementSystem/              # Ứng dụng Di Động Mobile Smart Court Management System (React Native / Expo)
 ├── app/                                     # Backend Core Engine & MVC Controllers / Models
 ├── database/                                # Database schemas, migrations & seeds
 ├── public/                                  # Static web assets & public build
