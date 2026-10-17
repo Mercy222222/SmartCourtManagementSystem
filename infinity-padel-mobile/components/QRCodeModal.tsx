@@ -10,7 +10,7 @@ interface QRCodeModalProps {
   onClose: () => void;
 }
 
-export const QRCodeModal: React.FC<QRCodeModalProps> = ({ visible, booking, onClose }) => {
+export const QRCodeModal = ({ visible, booking, onClose }: QRCodeModalProps) => {
   if (!booking) return null;
 
   return (

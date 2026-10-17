@@ -10,11 +10,11 @@ interface CourtSlotGridProps {
   onSelectSlot: (slot: TimeSlot) => void;
 }
 
-export const CourtSlotGrid: React.FC<CourtSlotGridProps> = ({
+export const CourtSlotGrid = ({
   slots,
   selectedSlotId,
   onSelectSlot,
-}) => {
+}: CourtSlotGridProps) => {
   const formatVND = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };

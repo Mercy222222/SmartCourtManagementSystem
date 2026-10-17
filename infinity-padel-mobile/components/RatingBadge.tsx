@@ -7,7 +7,7 @@ interface RatingBadgeProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const RatingBadge: React.FC<RatingBadgeProps> = ({ rating, size = 'medium' }) => {
+export const RatingBadge = ({ rating, size = 'medium' }: RatingBadgeProps) => {
   return (
     <View style={[styles.badge, size === 'small' ? styles.small : size === 'large' ? styles.large : styles.medium]}>
       <Text style={styles.prefix}>VPR</Text>

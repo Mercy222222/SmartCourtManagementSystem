@@ -10,7 +10,7 @@ interface OpenMatchCardProps {
   onJoin: (match: OpenMatch) => void;
 }
 
-export const OpenMatchCard: React.FC<OpenMatchCardProps> = ({ match, onJoin }) => {
+export const OpenMatchCard = ({ match, onJoin }: OpenMatchCardProps) => {
   const emptySlotsCount = match.players.filter((p) => !p.userId).length;
 
   const formatVND = (val: number) => {

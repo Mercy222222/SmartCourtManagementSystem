@@ -6,6 +6,13 @@ declare global {
     }
     interface Element extends any {}
   }
+
+  namespace React {
+    type FC<P = any> = (props: P) => any;
+    type ReactNode = any;
+    type ReactElement = any;
+    type ComponentType<P = any> = (props: P) => any;
+  }
 }
 
 declare module 'react' {
@@ -15,6 +22,7 @@ declare module 'react' {
   export const useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: any[]) => T;
   export const useRef: <T = any>(initial?: T) => { current: T };
   export type FC<T = any> = (props: T) => any;
+  export type ReactNode = any;
   const React: any;
   export default React;
 }

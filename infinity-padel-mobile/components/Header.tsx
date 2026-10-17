@@ -10,7 +10,7 @@ interface HeaderProps {
   subtitle?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
+export const Header = ({ title, subtitle }: HeaderProps) => {
   const { user } = useAuthStore();
 
   return (
