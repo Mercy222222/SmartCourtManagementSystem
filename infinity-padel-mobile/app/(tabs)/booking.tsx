@@ -7,7 +7,7 @@ import { COLORS } from '../../constants/theme';
 import { MOCK_CLUBS, MOCK_COURTS, MOCK_TIME_SLOTS } from '../../constants/mockData';
 import { CourtSlotGrid } from '../../components/CourtSlotGrid';
 import { useBookingStore } from '../../stores/useBookingStore';
-import { TimeSlot } from '../../types';
+import type { TimeSlot } from '../../types';
 
 export default function BookingScreen() {
   const router = useRouter();

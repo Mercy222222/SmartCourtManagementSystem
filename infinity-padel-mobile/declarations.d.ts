@@ -1,23 +1,37 @@
 // Type declarations for external modules to prevent IDE red squigglies
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      [elemName: string]: any;
+    }
+    interface Element extends any {}
+  }
+}
+
 declare module 'react' {
-  export const useState: any;
-  export const useEffect: any;
-  export const useMemo: any;
-  export const useCallback: any;
-  export const useRef: any;
-  export type FC<T = any> = any;
-  export default any;
+  export const useState: <T = any>(initial: T | (() => T)) => [T, (val: T | ((prev: T) => T)) => void];
+  export const useEffect: (effect: () => void | (() => void), deps?: any[]) => void;
+  export const useMemo: <T = any>(factory: () => T, deps?: any[]) => T;
+  export const useCallback: <T extends (...args: any[]) => any>(callback: T, deps?: any[]) => T;
+  export const useRef: <T = any>(initial?: T) => { current: T };
+  export type FC<T = any> = (props: T) => any;
+  const React: any;
+  export default React;
 }
 
 declare module 'react-native' {
   export const View: any;
   export const Text: any;
-  export const StyleSheet: any;
+  export const StyleSheet: {
+    create: <T extends Record<string, any>>(styles: T) => T;
+  };
   export const TouchableOpacity: any;
   export const ScrollView: any;
   export const Image: any;
   export const Modal: any;
-  export const Alert: any;
+  export const Alert: {
+    alert: (title: string, message?: string, buttons?: any[]) => void;
+  };
   export const FlatList: any;
   export const TextInput: any;
   export const Platform: any;
@@ -27,8 +41,12 @@ declare module 'react-native' {
 declare module 'expo-router' {
   export const Stack: any;
   export const Tabs: any;
-  export const useRouter: () => any;
-  export const useLocalSearchParams: () => any;
+  export const useRouter: () => {
+    push: (url: string) => void;
+    replace: (url: string) => void;
+    back: () => void;
+  };
+  export const useLocalSearchParams: <T = any>() => T;
   export const Link: any;
 }
 
@@ -39,7 +57,7 @@ declare module 'expo-status-bar' {
 declare module 'react-native-safe-area-context' {
   export const SafeAreaView: any;
   export const SafeAreaProvider: any;
-  export const useSafeAreaInsets: () => any;
+  export const useSafeAreaInsets: () => { top: number; bottom: number; left: number; right: number };
 }
 
 declare module '@tanstack/react-query' {
@@ -50,7 +68,7 @@ declare module '@tanstack/react-query' {
 }
 
 declare module 'zustand' {
-  export const create: any;
+  export const create: <T = any>(fn: (set: any, get: any) => T) => () => T;
 }
 
 declare module 'axios' {

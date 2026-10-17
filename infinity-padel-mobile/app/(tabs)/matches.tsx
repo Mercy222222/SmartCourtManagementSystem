@@ -5,7 +5,7 @@ import { Plus, Sparkles } from 'lucide-react-native';
 import { COLORS } from '../../constants/theme';
 import { MOCK_OPEN_MATCHES } from '../../constants/mockData';
 import { OpenMatchCard } from '../../components/OpenMatchCard';
-import { OpenMatch } from '../../types';
+import type { OpenMatch } from '../../types';
 
 export default function MatchesScreen() {
   const [selectedTier, setSelectedTier] = useState<'all' | 'casual' | 'inter' | 'pro'>('all');
@@ -15,7 +15,7 @@ export default function MatchesScreen() {
       'Xác Nhận Tham Gia Trận Đấu',
       `Bạn có muốn tham gia trận đấu tại ${match.club.name} lúc ${match.startTime}?\n\nChi phí chia đều: 110.000 VNĐ (trừ trực tiếp vào ví hoặc quét mã MoMo).`,
       [
-        { text: 'Hủy', style: 'cancel' },
+        { text: 'Hủy' },
         {
           text: 'Vào Trận Ngay',
           onPress: () => {
@@ -25,6 +25,13 @@ export default function MatchesScreen() {
       ]
     );
   };
+
+  const filteredMatches = MOCK_OPEN_MATCHES.filter((m) => {
+    if (selectedTier === 'casual') return m.requiredRatingMin < 3.0;
+    if (selectedTier === 'inter') return m.requiredRatingMin >= 3.0 && m.requiredRatingMax <= 4.5;
+    if (selectedTier === 'pro') return m.requiredRatingMax >= 4.5;
+    return true;
+  });
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -59,28 +66,37 @@ export default function MatchesScreen() {
           >
             <Text style={[styles.filterText, selectedTier === 'all' && styles.textWhite]}>Tất cả</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={[styles.filterTab, selectedTier === 'casual' && styles.filterTabActive]}
             onPress={() => setSelectedTier('casual')}
           >
-            <Text style={[styles.filterText, selectedTier === 'casual' && styles.textWhite]}>VPR &lt; 3.0</Text>
+            <Text style={[styles.filterText, selectedTier === 'casual' && styles.textWhite]}>
+              {'VPR < 3.0'}
+            </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={[styles.filterTab, selectedTier === 'inter' && styles.filterTabActive]}
             onPress={() => setSelectedTier('inter')}
           >
-            <Text style={[styles.filterText, selectedTier === 'inter' && styles.textWhite]}>3.0 - 4.5</Text>
+            <Text style={[styles.filterText, selectedTier === 'inter' && styles.textWhite]}>
+              3.0 - 4.5
+            </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={[styles.filterTab, selectedTier === 'pro' && styles.filterTabActive]}
             onPress={() => setSelectedTier('pro')}
           >
-            <Text style={[styles.filterText, selectedTier === 'pro' && styles.textWhite]}>VPR 4.5+</Text>
+            <Text style={[styles.filterText, selectedTier === 'pro' && styles.textWhite]}>
+              VPR 4.5+
+            </Text>
           </TouchableOpacity>
         </View>
 
         {/* Match List */}
-        {MOCK_OPEN_MATCHES.map((match) => (
+        {filteredMatches.map((match) => (
           <OpenMatchCard key={match.id} match={match} onJoin={handleJoinMatch} />
         ))}
       </ScrollView>
