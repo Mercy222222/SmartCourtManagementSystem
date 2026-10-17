@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Infinity Padel",
+    "slug": "infinity-padel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "infinitypadel",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0F1D"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "chervalier.marc.infinitypadel"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0F1D"
+      },
+      "package": "chervalier.marc.infinitypadel"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
