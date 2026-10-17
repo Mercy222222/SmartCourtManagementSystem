@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Users, Plus, Filter, ShieldCheck, Sparkles } from 'lucide-react-native';
+import { Plus, Sparkles } from 'lucide-react-native';
 import { COLORS } from '../../constants/theme';
 import { MOCK_OPEN_MATCHES } from '../../constants/mockData';
 import { OpenMatchCard } from '../../components/OpenMatchCard';

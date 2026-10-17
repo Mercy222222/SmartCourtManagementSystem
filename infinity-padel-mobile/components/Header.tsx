@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Bell, MapPin } from 'lucide-react-native';
+import { Bell } from 'lucide-react-native';
 import { COLORS } from '../constants/theme';
 import { useAuthStore } from '../stores/useAuthStore';
 import { RatingBadge } from './RatingBadge';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Calendar, Clock, MapPin, Users, Plus } from 'lucide-react-native';
+import { Calendar, Clock, MapPin, Plus } from 'lucide-react-native';
 import { COLORS } from '../constants/theme';
 import { OpenMatch } from '../types';
 import { RatingBadge } from './RatingBadge';

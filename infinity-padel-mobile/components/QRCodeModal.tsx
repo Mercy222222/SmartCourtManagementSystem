@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { X, QrCode, ShieldCheck, MapPin, Calendar, Clock } from 'lucide-react-native';
+import { X, QrCode, ShieldCheck, MapPin } from 'lucide-react-native';
 import { COLORS } from '../constants/theme';
 import { Booking } from '../types';
 

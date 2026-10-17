@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Clock, Check } from 'lucide-react-native';
 import { COLORS } from '../constants/theme';
 import { TimeSlot } from '../types';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ShieldCheck, MapPin, Calendar, Clock, CreditCard, Check, ArrowRight, Share2 } from 'lucide-react-native';
+import { ShieldCheck, MapPin, Calendar, Clock, CreditCard, Check, Share2 } from 'lucide-react-native';
 import { COLORS } from '../constants/theme';
 import { useBookingStore } from '../stores/useBookingStore';
 import { useAuthStore } from '../stores/useAuthStore';

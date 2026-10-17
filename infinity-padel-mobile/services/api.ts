@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { MOCK_CLUBS, MOCK_COURTS, MOCK_TIME_SLOTS, MOCK_OPEN_MATCHES, MOCK_BOOKINGS, CURRENT_USER } from '../constants/mockData';
-import { Club, Court, TimeSlot, OpenMatch, Booking, User } from '../types';
+import { Club, Court, TimeSlot, OpenMatch, Booking } from '../types';
 
 // Connect to the local PHP backend if available, with graceful fallback to cached data
 const BASE_URL = 'http://localhost:8080/index.php?url=api';
