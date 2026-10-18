@@ -44,6 +44,12 @@
         "projectId": "a79be3a0-7783-4ac1-86b7-d1732d4fe6db"
       }
     },
-    "owner": "huutri222s-team"
+    "owner": "huutri222s-team",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a79be3a0-7783-4ac1-86b7-d1732d4fe6db"
+    }
   }
 }
