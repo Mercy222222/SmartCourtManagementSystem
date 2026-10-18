@@ -1,7 +1,8 @@
 export type CourtType = 'indoor' | 'outdoor' | 'panoramic';
 export type SlotStatus = 'available' | 'hold' | 'booked' | 'maintenance';
 export type MatchStatus = 'open' | 'full' | 'in_progress' | 'completed';
-export type PaymentMethod = 'vnpay' | 'momo' | 'wallet' | 'cash';
+export type PaymentMethod = 'vnpay' | 'momo' | 'wallet' | 'bank_transfer' | 'cash';
+export type Language = 'vi' | 'en';
 
 export interface User {
   id: string;
@@ -9,10 +10,10 @@ export interface User {
   email: string;
   phone?: string;
   avatarUrl?: string;
-  vprRating: number; // e.g. 3.75 (scale 1.0 - 7.0)
+  vprRating: number; // e.g. 4.25 (scale 1.0 - 7.0)
   levelTitle: string; // 'Advanced Amateur', 'Intermediate', 'Pro'
   matchesPlayed: number;
-  winRate: number; // percentage, e.g. 68
+  winRate: number; // percentage, e.g. 72
   walletBalance: number; // in VND
 }
 
@@ -26,6 +27,8 @@ export interface Club {
   rating: number;
   totalCourts: number;
   amenities: string[];
+  hotline?: string;
+  operatingHours?: string;
 }
 
 export interface Court {
@@ -36,6 +39,9 @@ export interface Court {
   surface: string;
   pricePerHour: number;
   features: string[];
+  dimensions?: string;
+  lighting?: string;
+  glassThickness?: string;
 }
 
 export interface TimeSlot {
@@ -47,6 +53,40 @@ export interface TimeSlot {
   price: number;     // e.g. 350000 VND
   status: SlotStatus;
   holdExpiresAt?: number; // timestamp
+}
+
+export interface Coach {
+  id: string;
+  name: string;
+  title: string;
+  titleEn: string;
+  phone: string;
+  email: string;
+  avatarUrl: string;
+  avatarSource?: any;
+  rating: number;
+  reviewCount: number;
+  experienceYears: number;
+  pricePerHour: number;
+  bio: string;
+  bioEn: string;
+  specialties: string[];
+  availableDays: string[];
+  availableTimeSlots: string[];
+}
+
+export interface CoachingBooking {
+  id: string;
+  userId: string;
+  coach: Coach;
+  club: Club;
+  date: string;
+  timeSlot: string;
+  totalPrice: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: 'pending' | 'paid' | 'cancelled';
+  notes?: string;
+  createdAt: string;
 }
 
 export interface PlayerSlot {
@@ -83,4 +123,37 @@ export interface Booking {
   paymentStatus: 'pending' | 'paid' | 'cancelled';
   qrCodeToken: string;
   createdAt: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  title: string;
+  titleEn: string;
+  message: string;
+  messageEn: string;
+  type: 'system' | 'booking' | 'match' | 'wallet' | 'maintenance';
+  timestamp: string;
+  isRead: boolean;
+  actionUrl?: string;
+}
+
+export interface MaintenanceNotice {
+  id: string;
+  active: boolean;
+  title: string;
+  titleEn: string;
+  message: string;
+  messageEn: string;
+  scheduledTime: string;
+  severity: 'info' | 'warning' | 'critical';
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: 'topup' | 'payment' | 'refund';
+  amount: number;
+  description: string;
+  timestamp: string;
+  paymentMethod: string;
+  status: 'success' | 'failed' | 'pending';
 }

@@ -5,21 +5,57 @@ import { Plus, Sparkles } from 'lucide-react-native';
 import { COLORS } from '../../constants/theme';
 import { MOCK_OPEN_MATCHES } from '../../constants/mockData';
 import { OpenMatchCard } from '../../components/OpenMatchCard';
+import { CreateMatchModal } from '../../components/CreateMatchModal';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { useNotificationStore } from '../../stores/useNotificationStore';
+import { useLanguageStore } from '../../stores/useLanguageStore';
 import type { OpenMatch } from '../../types';
 
 export default function MatchesScreen() {
+  const { user, updateWallet } = useAuthStore();
+  const { addNotification } = useNotificationStore();
+  const { t } = useLanguageStore();
+
   const [selectedTier, setSelectedTier] = useState<'all' | 'casual' | 'inter' | 'pro'>('all');
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+
+  const formatVND = (val: number) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
+  };
 
   const handleJoinMatch = (match: OpenMatch) => {
+    const fee = match.pricePerPlayer;
+
     Alert.alert(
-      'Xác Nhận Tham Gia Trận Đấu',
-      `Bạn có muốn tham gia trận đấu tại ${match.club.name} lúc ${match.startTime}?\n\nChi phí chia đều: 110.000 VNĐ (trừ trực tiếp vào ví hoặc quét mã MoMo).`,
+      t.confirmJoinTitle,
+      `Bạn có muốn tham gia trận đấu tại ${match.club.name} lúc ${match.startTime} - ${match.endTime}?\n\nChi phí chia đều: ${formatVND(fee)} (trừ trực tiếp vào ví thành viên).`,
       [
         { text: 'Hủy' },
         {
-          text: 'Vào Trận Ngay',
+          text: t.joinMatchBtn,
           onPress: () => {
-            Alert.alert('Thành Công!', 'Bạn đã tham gia trận đấu. Thông báo đã được gửi đến 3 người chơi còn lại!');
+            if ((user?.walletBalance || 0) < fee) {
+              Alert.alert(
+                'Số Dư Ví Không Đủ',
+                `Bạn cần có ít nhất ${formatVND(fee)} để tham gia trận đấu này. Vui lòng nạp thêm tiền vào ví tại mục "Cá Nhân".`
+              );
+              return;
+            }
+
+            updateWallet(-fee, `Phí tham gia trận đấu tại ${match.club.name}`, 'Ví Infinity');
+
+            addNotification({
+              title: '🎾 Đã Tham Gia Trận Đấu',
+              titleEn: '🎾 Joined Match Successfully',
+              message: `Bạn đã tham gia trận đấu lúc ${match.startTime} tại ${match.club.name}. Đã trừ ${formatVND(fee)} vào ví thành viên.`,
+              messageEn: `Joined match at ${match.startTime} at ${match.club.name}. Fee: ${formatVND(fee)}.`,
+              type: 'match',
+            });
+
+            Alert.alert(
+              '🎉 Thành Công!',
+              `Bạn đã ghi danh vào trận đấu thành công!\n\nThông báo và số điện thoại liên lạc của bạn đã được gửi đến 3 bạn chơi còn lại.`
+            );
           },
         },
       ]
@@ -37,12 +73,16 @@ export default function MatchesScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Ghép Trận Padel</Text>
-          <Text style={styles.subtitle}>Giao lưu bạn chơi cùng điểm trình độ VPR</Text>
+          <Text style={styles.title}>{t.matchesTitle}</Text>
+          <Text style={styles.subtitle}>{t.matchesSubtitle}</Text>
         </View>
-        <TouchableOpacity style={styles.createBtn}>
+        <TouchableOpacity
+          style={styles.createBtn}
+          onPress={() => setCreateModalVisible(true)}
+          activeOpacity={0.8}
+        >
           <Plus size={16} color="#FFF" />
-          <Text style={styles.createBtnText}>Tạo Trận</Text>
+          <Text style={styles.createBtnText}>{t.createMatchBtn}</Text>
         </TouchableOpacity>
       </View>
 
@@ -51,10 +91,8 @@ export default function MatchesScreen() {
         <View style={styles.aiBanner}>
           <Sparkles size={18} color="#FBBF24" />
           <View style={styles.aiTextContainer}>
-            <Text style={styles.aiTitle}>Gợi ý từ AI Matchmaker</Text>
-            <Text style={styles.aiDesc}>
-              Với chỉ số VPR 4.25 của bạn, chúng tôi đề xuất tham gia trận đấu lúc 19:00 tại Thảo Điền Club để tích thêm +15 điểm LP!
-            </Text>
+            <Text style={styles.aiTitle}>{t.aiMatchmakerTitle}</Text>
+            <Text style={styles.aiDesc}>{t.aiMatchmakerDesc}</Text>
           </View>
         </View>
 
@@ -64,7 +102,9 @@ export default function MatchesScreen() {
             style={[styles.filterTab, selectedTier === 'all' && styles.filterTabActive]}
             onPress={() => setSelectedTier('all')}
           >
-            <Text style={[styles.filterText, selectedTier === 'all' && styles.textWhite]}>Tất cả</Text>
+            <Text style={[styles.filterText, selectedTier === 'all' && styles.textWhite]}>
+              {t.filterAll}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -100,6 +140,12 @@ export default function MatchesScreen() {
           <OpenMatchCard key={match.id} match={match} onJoin={handleJoinMatch} />
         ))}
       </ScrollView>
+
+      {/* Create Match Modal */}
+      <CreateMatchModal
+        visible={createModalVisible}
+        onClose={() => setCreateModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

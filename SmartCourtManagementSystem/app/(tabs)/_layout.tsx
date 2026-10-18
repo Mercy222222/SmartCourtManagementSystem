@@ -2,8 +2,11 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { Home, Calendar, Users, Ticket, User } from 'lucide-react-native';
 import { COLORS } from '../../constants/theme';
+import { useLanguageStore } from '../../stores/useLanguageStore';
 
 export default function TabLayout() {
+  const { t } = useLanguageStore();
+
   return (
     <Tabs
       screenOptions={{
@@ -27,35 +30,35 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Khám Phá',
+          title: t.navExplore,
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="booking"
         options={{
-          title: 'Đặt Sân',
+          title: t.navBook,
           tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="matches"
         options={{
-          title: 'Ghép Trận',
+          title: t.navMatches,
           tabBarIcon: ({ color, size }) => <Users size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
-          title: 'Vé Của Tôi',
+          title: t.navTickets,
           tabBarIcon: ({ color, size }) => <Ticket size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Cá Nhân',
+          title: t.navProfile,
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       />

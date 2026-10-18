@@ -44,6 +44,11 @@ declare module 'react-native' {
   export const TextInput: any;
   export const Platform: any;
   export const Dimensions: any;
+  export const ActivityIndicator: any;
+  export const Linking: {
+    openURL: (url: string) => Promise<any>;
+    canOpenURL: (url: string) => Promise<boolean>;
+  };
 }
 
 declare module 'expo-router' {
@@ -115,6 +120,24 @@ declare module 'lucide-react-native' {
   export const User: any;
   export const Sparkles: any;
   export const Filter: any;
+  export const Phone: any;
+  export const PhoneCall: any;
+  export const Mail: any;
+  export const Lock: any;
+  export const LogIn: any;
+  export const UserPlus: any;
+  export const Camera: any;
+  export const Edit3: any;
+  export const Globe: any;
+  export const Medal: any;
+  export const Flame: any;
+  export const AlertTriangle: any;
+  export const AlertCircle: any;
+  export const PlusCircle: any;
+  export const CheckCheck: any;
+  export const Trash2: any;
+  export const Copy: any;
+  export const FileText: any;
 }
 
 declare module 'react-native-qrcode-svg' {

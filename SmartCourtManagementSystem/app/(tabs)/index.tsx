@@ -1,110 +1,159 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Calendar, Users, Wallet, Trophy, MapPin, Star, ArrowRight, Zap } from 'lucide-react-native';
+import { Calendar, Users, Wallet, Trophy, MapPin, Star, ArrowRight, Zap, Award, Sparkles } from 'lucide-react-native';
 import { COLORS } from '../../constants/theme';
 import { Header } from '../../components/Header';
-import { MOCK_CLUBS, MOCK_BOOKINGS } from '../../constants/mockData';
+import { MaintenanceBanner } from '../../components/MaintenanceBanner';
+import { TournamentModal } from '../../components/TournamentModal';
+import { LeaderboardModal } from '../../components/LeaderboardModal';
+import { TopUpModal } from '../../components/TopUpModal';
+import { CoachingModal } from '../../components/CoachingModal';
+import { MOCK_CLUBS } from '../../constants/mockData';
+import { useBookingStore } from '../../stores/useBookingStore';
+import { useLanguageStore } from '../../stores/useLanguageStore';
+import { useNotificationStore } from '../../stores/useNotificationStore';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const nextBooking = MOCK_BOOKINGS[0];
+  const { setSelectedClub, bookings } = useBookingStore();
+  const { t } = useLanguageStore();
+
+  const [tournamentModalVisible, setTournamentModalVisible] = useState(false);
+  const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false);
+  const [topUpModalVisible, setTopUpModalVisible] = useState(false);
+  const [coachingModalVisible, setCoachingModalVisible] = useState(false);
+
+  const nextBooking = bookings.length > 0 ? bookings[0] : null;
+
+  const handleSelectClubAndNavigate = (club: typeof MOCK_CLUBS[0]) => {
+    setSelectedClub(club);
+    router.push('/(tabs)/booking');
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <Header subtitle="Sẵn sàng ra sân," />
+        <Header />
 
-        {/* Hero Banner */}
+        {/* Real-time System Maintenance & Update Alert Banner */}
+        <MaintenanceBanner onPressDetails={() => setTournamentModalVisible(false)} />
+
+        {/* Hero Tournament Banner with Working Details Modal */}
         <View style={styles.heroBanner}>
           <View style={styles.heroTag}>
             <Zap size={13} color="#FFF" />
-            <Text style={styles.heroTagText}>TOURNAMENT 2026</Text>
+            <Text style={styles.heroTagText}>{t.tournamentTag}</Text>
           </View>
-          <Text style={styles.heroTitle}>Infinity Padel Championship</Text>
-          <Text style={styles.heroDesc}>Tổng giải thưởng 150.000.000 VNĐ. Đăng ký đôi nam/nữ ngay hôm nay!</Text>
-          <TouchableOpacity style={styles.heroBtn}>
-            <Text style={styles.heroBtnText}>Xem chi tiết</Text>
+          <Text style={styles.heroTitle}>{t.tournamentTitle}</Text>
+          <Text style={styles.heroDesc}>{t.tournamentDesc}</Text>
+          <TouchableOpacity
+            style={styles.heroBtn}
+            onPress={() => setTournamentModalVisible(true)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.heroBtnText}>{t.viewDetails}</Text>
             <ArrowRight size={14} color="#000" />
           </TouchableOpacity>
         </View>
 
-        {/* Next Match Widget */}
+        {/* Next Match Widget (From real booking store) */}
         {nextBooking && (
           <View style={styles.nextMatchCard}>
             <View style={styles.nextMatchHeader}>
               <View style={styles.liveIndicator}>
                 <View style={styles.liveDot} />
-                <Text style={styles.liveText}>TRẬN ĐẤU SẮP TỚI</Text>
+                <Text style={styles.liveText}>{t.upcomingMatch}</Text>
               </View>
               <Text style={styles.matchDate}>{nextBooking.date}</Text>
             </View>
 
             <Text style={styles.matchCourtName}>{nextBooking.court.name}</Text>
-            
+
             <View style={styles.matchDetailRow}>
               <View style={styles.iconText}>
                 <MapPin size={13} color={COLORS.emeraldLight} />
                 <Text style={styles.matchDetailText}>{nextBooking.club.name}</Text>
               </View>
-              <Text style={styles.matchTimeText}>{nextBooking.startTime} - {nextBooking.endTime}</Text>
+              <Text style={styles.matchTimeText}>
+                {nextBooking.startTime} - {nextBooking.endTime}
+              </Text>
             </View>
 
             <TouchableOpacity
               style={styles.checkInBtn}
               onPress={() => router.push('/(tabs)/history')}
+              activeOpacity={0.8}
             >
-              <Text style={styles.checkInBtnText}>Mở Vé QR Check-In</Text>
+              <Text style={styles.checkInBtnText}>{t.openQrTicket}</Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {/* Quick Action Buttons */}
+        {/* Quick Action Buttons - ALL 100% CONNECTED & WORKING */}
         <View style={styles.quickActionsRow}>
           <TouchableOpacity
             style={styles.actionItem}
             onPress={() => router.push('/(tabs)/booking')}
+            activeOpacity={0.7}
           >
             <View style={[styles.actionIcon, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
               <Calendar size={22} color={COLORS.emerald} />
             </View>
-            <Text style={styles.actionLabel}>Đặt Sân</Text>
+            <Text style={styles.actionLabel}>{t.actionBookCourt}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionItem}
             onPress={() => router.push('/(tabs)/matches')}
+            activeOpacity={0.7}
           >
             <View style={[styles.actionIcon, { backgroundColor: 'rgba(249, 115, 22, 0.15)' }]}>
               <Users size={22} color={COLORS.padelOrange} />
             </View>
-            <Text style={styles.actionLabel}>Ghép Trận</Text>
+            <Text style={styles.actionLabel}>{t.actionMatchmaking}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionItem}
-            onPress={() => router.push('/(tabs)/profile')}
+            onPress={() => setTopUpModalVisible(true)}
+            activeOpacity={0.7}
           >
             <View style={[styles.actionIcon, { backgroundColor: 'rgba(59, 130, 246, 0.15)' }]}>
               <Wallet size={22} color="#3B82F6" />
             </View>
-            <Text style={styles.actionLabel}>Nạp Ví</Text>
+            <Text style={styles.actionLabel}>{t.actionTopUp}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionItem}>
+          <TouchableOpacity
+            style={styles.actionItem}
+            onPress={() => setLeaderboardModalVisible(true)}
+            activeOpacity={0.7}
+          >
             <View style={[styles.actionIcon, { backgroundColor: 'rgba(234, 179, 8, 0.15)' }]}>
               <Trophy size={22} color="#EAB308" />
             </View>
-            <Text style={styles.actionLabel}>Bảng Xếp Hạng</Text>
+            <Text style={styles.actionLabel}>{t.actionLeaderboard}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionItem}
+            onPress={() => setCoachingModalVisible(true)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.actionIcon, { backgroundColor: 'rgba(168, 85, 247, 0.15)' }]}>
+              <Award size={22} color="#A855F7" />
+            </View>
+            <Text style={styles.actionLabel}>{t.actionCoaching}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Clubs Near You */}
+        {/* Clubs Section with 3 Branches */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Câu Lạc Bộ Gần Bạn</Text>
+          <Text style={styles.sectionTitle}>{t.clubsNearYou} (3 Chi Nhánh)</Text>
           <TouchableOpacity onPress={() => router.push('/(tabs)/booking')}>
-            <Text style={styles.seeAllText}>Xem tất cả</Text>
+            <Text style={styles.seeAllText}>{t.seeAll}</Text>
           </TouchableOpacity>
         </View>
 
@@ -112,7 +161,8 @@ export default function HomeScreen() {
           <TouchableOpacity
             key={club.id}
             style={styles.clubCard}
-            onPress={() => router.push('/(tabs)/booking')}
+            onPress={() => handleSelectClubAndNavigate(club)}
+            activeOpacity={0.8}
           >
             <Image source={{ uri: club.imageUrl }} style={styles.clubImg} />
             <View style={styles.clubCardContent}>
@@ -130,13 +180,31 @@ export default function HomeScreen() {
               </View>
 
               <View style={styles.amenitiesRow}>
-                <Text style={styles.courtBadge}>{club.totalCourts} sân tiêu chuẩn WPT</Text>
+                <Text style={styles.courtBadge}>{club.totalCourts} {t.courtsCount}</Text>
                 <Text style={styles.distanceBadge}>{club.distanceKm} km</Text>
               </View>
             </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+      {/* Interactive Modals */}
+      <TournamentModal
+        visible={tournamentModalVisible}
+        onClose={() => setTournamentModalVisible(false)}
+      />
+      <LeaderboardModal
+        visible={leaderboardModalVisible}
+        onClose={() => setLeaderboardModalVisible(false)}
+      />
+      <TopUpModal
+        visible={topUpModalVisible}
+        onClose={() => setTopUpModalVisible(false)}
+      />
+      <CoachingModal
+        visible={coachingModalVisible}
+        onClose={() => setCoachingModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -278,23 +346,23 @@ const styles = StyleSheet.create({
   quickActionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginHorizontal: 20,
-    marginBottom: 28,
+    marginHorizontal: 16,
+    marginBottom: 24,
   },
   actionItem: {
     alignItems: 'center',
   },
   actionIcon: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   actionLabel: {
     color: COLORS.textPrimary,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
   },
   sectionHeader: {
@@ -306,7 +374,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: COLORS.textPrimary,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
   },
   seeAllText: {

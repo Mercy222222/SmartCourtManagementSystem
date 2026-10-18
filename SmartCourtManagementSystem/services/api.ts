@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { MOCK_CLUBS, MOCK_COURTS, MOCK_TIME_SLOTS, MOCK_OPEN_MATCHES, MOCK_BOOKINGS, CURRENT_USER } from '../constants/mockData';
-import { Club, Court, TimeSlot, OpenMatch, Booking } from '../types';
+import { MOCK_CLUBS, MOCK_COURTS, MOCK_COACHES, MOCK_OPEN_MATCHES, MOCK_BOOKINGS, CURRENT_USER } from '../constants/mockData';
+import { Club, Court, TimeSlot, OpenMatch, Booking, Coach } from '../types';
 
 // Connect to the local PHP backend if available, with graceful fallback to cached data
 const BASE_URL = 'http://localhost:8080/index.php?url=api';
@@ -14,38 +14,41 @@ export const apiClient = axios.create({
 });
 
 export const apiService = {
-  // Get list of sports clubs
+  // Get list of sports clubs (3 branches)
   getClubs: async (): Promise<Club[]> => {
     try {
       const response = await apiClient.get('/categories');
       if (response.data && response.data.data) {
-        // Map backend category to club data structure
         return MOCK_CLUBS;
       }
       return MOCK_CLUBS;
     } catch (e) {
-      // Fallback for offline mode
       return MOCK_CLUBS;
     }
   },
 
-  // Get courts in a club
+  // Get courts in a specific club - filtered dynamically by clubId!
   getCourts: async (clubId: string): Promise<Court[]> => {
     try {
       const response = await apiClient.get(`/products?category_id=${clubId}`);
-      if (response.data && response.data.data) {
-        return MOCK_COURTS;
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        return MOCK_COURTS.filter((c) => c.clubId === clubId);
       }
-      return MOCK_COURTS;
+      return MOCK_COURTS.filter((c) => c.clubId === clubId);
     } catch (e) {
-      return MOCK_COURTS;
+      return MOCK_COURTS.filter((c) => c.clubId === clubId);
     }
+  },
+
+  // Get coaches list
+  getCoaches: async (): Promise<Coach[]> => {
+    return MOCK_COACHES;
   },
 
   // Get time slots for a court on a date
   getTimeSlots: async (courtId: string, date: string): Promise<TimeSlot[]> => {
-    // In production, queries real slot database with Redis lock
-    return MOCK_TIME_SLOTS;
+    // Return empty fallback; useBookingStore calculates dynamic slots
+    return [];
   },
 
   // Get open matches for community pairing
@@ -74,9 +77,9 @@ export const apiService = {
       club: bookingData.club || MOCK_CLUBS[0],
       court: bookingData.court || MOCK_COURTS[0],
       date: bookingData.date || '2026-10-18',
-      startTime: bookingData.startTime || '19:00',
-      endTime: bookingData.endTime || '20:30',
-      totalPrice: bookingData.totalPrice || 420000,
+      startTime: bookingData.startTime || '18:30',
+      endTime: bookingData.endTime || '20:00',
+      totalPrice: bookingData.totalPrice || 450000,
       paymentMethod: bookingData.paymentMethod || 'momo',
       paymentStatus: 'paid',
       qrCodeToken: `INFINITY_PADEL_${Date.now()}`,
