@@ -18,3 +18,6 @@ Understand-Anything/
 andrej-karpathy-skills/
 *.log
 ai-research/
+ 
+*.tmp
+
