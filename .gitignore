@@ -18,6 +18,8 @@ Understand-Anything/
 andrej-karpathy-skills/
 *.log
 ai-research/
- 
-*.tmp
 
+# Temporary & IDE configs
+*.tmp
+.idea/
+.vscode/
