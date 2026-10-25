@@ -11,7 +11,7 @@ set "ANDROID_HOME=%LOCALAPPDATA%\Android\Sdk"
 set "PATH=C:\Program Files\nodejs;C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot\bin;%LOCALAPPDATA%\Android\Sdk\platform-tools;%PATH%"
 
 echo [1/2] Tao thu muc native Android (Prebuild)...
-call npx expo prebuild --platform android --clean --no-install
+call "C:\Program Files\nodejs\npx.cmd" expo prebuild --platform android --clean --no-install
 
 echo.
 echo [2/2] Bien dich APK bang Gradle tren may...
@@ -21,7 +21,10 @@ call gradlew.bat assembleDebug
 echo.
 echo =======================================================
 echo  BUILD THANH CONG!
-echo  File APK nam tai:
-echo  SmartCourtManagementSystem\android\app\build\outputs\apk\debug\app-debug.apk
 echo =======================================================
-pause
+cd ..
+if exist "android\app\build\outputs\apk\debug\app-debug.apk" (
+    copy /Y "android\app\build\outputs\apk\debug\app-debug.apk" "..\SmartCourt-v1.0.0.apk"
+    copy /Y "android\app\build\outputs\apk\debug\app-debug.apk" "SmartCourt-v1.0.0.apk"
+    echo File APK da duoc copy ra: SmartCourtManagementSystem\SmartCourt-v1.0.0.apk
+)
