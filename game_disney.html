@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Disney+ Defender: Đấu Trường An Ninh Mạng (Mobile Optimized Edition)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Outfit & Cinzel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons & Canvas Confetti -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --disney-navy: #040714;
+            --disney-card: #090b13;
+            --disney-blue: #0063e5;
+            --disney-blue-hover: #0483ee;
+            --disney-cyan: #00ffff;
+            --disney-border: rgba(255, 255, 255, 0.12);
+        }
+        * {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--disney-navy);
+            color: #f9f9f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            perspective: 1200px;
+            padding-bottom: env(safe-area-inset-bottom, 1.5rem);
+        }
+        .font-disney-title {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1.5px;
+        }
+        .text-fluid-hero {
+            font-size: clamp(1.75rem, 5vw, 3.8rem);
+            line-height: 1.15;
+        }
+
+        /* 3D Dynamic Card Tilt */
+        .card-3d-tilt {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        /* Disney+ Blue Glow Button (Mobile Touch Friendly) */
+        .btn-disney-blue {
+            background-color: var(--disney-blue);
+            transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 4px 18px rgba(0, 99, 229, 0.45);
+            min-height: 50px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .btn-disney-blue:hover {
+            background-color: var(--disney-blue-hover);
+            box-shadow: 0 6px 28px rgba(0, 99, 229, 0.8), 0 0 15px rgba(0, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-disney-blue:active {
+            transform: translateY(2px) scale(0.97);
+        }
+
+        /* Disney+ Brand Hub Cards */
+        .brand-hub-card {
+            background: linear-gradient(180deg, #1b2030 0%, #080a11 100%);
+            border: 2px solid var(--disney-border);
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+            user-select: none;
+            min-height: 105px;
+        }
+        .brand-hub-card:hover {
+            transform: translateY(-4px) scale(1.04);
+            border-color: #f9f9f9;
+            box-shadow: 0 16px 35px rgba(0, 99, 229, 0.6);
+        }
+        .brand-hub-card.active-hub {
+            border-color: #00ffff !important;
+            background: linear-gradient(180deg, #0063e5 0%, #06152e 100%) !important;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.75), 0 8px 25px rgba(0, 0, 0, 0.9) !important;
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* Disney+ 4K Cinema Player Card */
+        .disney-player-card {
+            background: rgba(9, 11, 19, 0.92);
+            backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 99, 229, 0.2);
+        }
+
+        /* Mobile Responsive Option Buttons */
+        .disney-option-btn {
+            background: rgba(20, 25, 42, 0.88);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+            min-height: 56px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .disney-option-btn:hover {
+            border-color: #f9f9f9;
+            background: rgba(32, 40, 65, 0.96);
+            transform: translateY(-2px);
+        }
+        .disney-option-btn:active {
+            transform: translateY(2px) scale(0.98);
+        }
+
+        /* 3D Auroras & Cosmic Nebula */
+        .disney-aurora-glow {
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90vw;
+            height: 600px;
+            background: radial-gradient(ellipse at center, rgba(0, 99, 229, 0.3) 0%, rgba(0, 255, 255, 0.12) 35%, rgba(124, 58, 237, 0.08) 60%, transparent 80%);
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
+
+    <!-- 3D Fullscreen Interactive Canvas -->
+    <canvas id="disney3DCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+    <div class="disney-aurora-glow"></div>
+
+    <!-- DISNEY+ STICKY NAVBAR -->
+    <header class="relative z-30 sticky top-0 px-4 md:px-12 py-3 bg-[#040714]/85 backdrop-blur-md border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-4 md:gap-6">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="restartGame()">
+                <div class="relative">
+                    <svg viewBox="0 0 160 48" class="h-8 md:h-9 w-auto">
+                        <defs>
+                            <linearGradient id="disneyGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#0063e5" />
+                                <stop offset="50%" stop-color="#00ffff" />
+                                <stop offset="100%" stop-color="#f9f9f9" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M 12 36 Q 78 4 148 36" fill="none" stroke="url(#disneyGlow)" stroke-width="3" stroke-linecap="round"/>
+                        <text x="18" y="33" fill="#f9f9f9" font-family="'Cinzel', serif" font-weight="900" font-size="20" letter-spacing="2">DISNEY</text>
+                        <text x="126" y="34" fill="#00ffff" font-family="'Outfit', sans-serif" font-weight="900" font-size="28">+</text>
+                    </svg>
+                </div>
+                <span class="hidden sm:inline-block text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/50 text-cyan-300">
+                    MOBILE 100%
+                </span>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-5 text-xs uppercase tracking-widest font-bold text-gray-300">
+                <a href="#hubSection" class="hover:text-white flex items-center gap-1.5 transition"><i data-lucide="layers" class="w-3.5 h-3.5"></i> 5 Phân Khu</a>
+                <a href="#modeSection" class="hover:text-white flex items-center gap-1.5 transition"><i data-lucide="shield" class="w-3.5 h-3.5"></i> Chế Độ Chơi</a>
+                <span class="text-gray-600">•</span>
+                <span class="text-cyan-400 font-mono">HUTECH 2026</span>
+            </nav>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button onclick="toggleVoice()" id="voiceBtn" class="text-xs font-bold px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 flex items-center gap-1.5 text-cyan-300 transition">
+                <i data-lucide="mic" class="w-3.5 h-3.5"></i>
+                <span id="voiceStatusText" class="hidden sm:inline">Giọng AI: BẬT</span>
+            </button>
+            <button onclick="toggleSound()" id="soundToggleBtn" class="p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-gray-200 transition">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+            </button>
+            <button onclick="openClassroomModal()" class="text-xs font-black uppercase tracking-wider px-3.5 py-1.5 md:px-4 md:py-2 rounded-full border border-cyan-400 text-cyan-300 hover:bg-cyan-950/40 flex items-center gap-1.5 transition shadow-lg">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                <span>Mã Lớp Học</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="relative z-10 max-w-6xl w-full mx-auto px-4 py-5 md:py-10 flex-grow flex flex-col justify-center items-center">
+
+        <!-- SCREEN 1: HERO & 5 BRAND HUBS -->
+        <div id="welcomeScreen" class="w-full space-y-7 md:space-y-10">
+            <div class="text-center max-w-3xl mx-auto space-y-3.5">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-950/70 border border-blue-500/50 text-cyan-300 text-xs font-extrabold tracking-widest uppercase shadow-xl">
+                    <span class="animate-pulse">✨</span>
+                    <span>ĐẤU TRƯỜNG AN NINH MẠNG SINH VIÊN 2026</span>
+                </div>
+                <h1 class="text-fluid-hero font-black tracking-tight uppercase">
+                    TẤT CẢ CÂU CHUYỆN.<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-300">MỌI CẠM BẪY LỪA ĐẢO.</span><br>
+                    TẬP TRUNG TẠI ĐÂY.
+                </h1>
+                <p class="text-xs md:text-base text-gray-300 max-w-2xl mx-auto leading-relaxed px-2">
+                    Trang bị lá chắn số, giải mã <strong>10 tình huống lừa đảo sinh viên thực tế</strong> (Giả mạo công an, cướp OTP ngân hàng, việc làm nhẹ lương cao và đầu tư ảo).
+                </p>
+
+                <!-- Input Name & Start Button -->
+                <div class="pt-2 max-w-xl mx-auto space-y-3">
+                    <div class="flex flex-col sm:flex-row gap-2.5 px-2 sm:px-0">
+                        <input type="text" id="playerNameInput" value="Võ Hữu Trí - 23DTHC7" placeholder="Nhập họ tên, lớp, MSSV của bạn..." class="flex-grow px-5 py-3.5 md:py-4 rounded-xl bg-gray-900/90 border border-white/20 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-cyan-400 transition font-medium shadow-inner">
+                        <button type="button" onclick="startGame()" class="btn-disney-blue px-8 py-3.5 md:py-4 rounded-xl text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shrink-0">
+                            <span id="startBtnText">BẮT ĐẦU NGAY</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5 BRAND HUBS (TOUCH OPTIMIZED) -->
+            <div id="hubSection" class="space-y-3">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="text-xs uppercase font-extrabold tracking-widest text-gray-400">5 Phân Khu Chiến Thuật Cảnh Giác:</h3>
+                    <span class="text-xs text-cyan-400 font-bold" id="currentHouseDisplay">Đang chọn: Phân Khu Marvel</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    <div onclick="selectHouse('Nhà Disney - Phép Thuật Cảnh Giác', this)" class="brand-hub-card card-3d-tilt p-3.5 md:p-4 flex flex-col items-center justify-center text-center gap-1.5 group">
+                        <span class="text-3xl group-hover:scale-125 transition duration-300">🏰</span>
+                        <div class="font-disney-title font-bold text-xs md:text-sm tracking-widest text-cyan-200">DISNEY</div>
+                        <span class="text-[10px] text-gray-400 leading-tight">Phép thuật tỉnh táo, bài trừ quà tặng ảo</span>
+                    </div>
+                    <div onclick="selectHouse('Nhà Pixar - Thám Tử Trí Tuệ', this)" class="brand-hub-card card-3d-tilt p-3.5 md:p-4 flex flex-col items-center justify-center text-center gap-1.5 group">
+                        <span class="text-3xl group-hover:scale-125 transition duration-300">💡</span>
+                        <div class="font-extrabold text-xs md:text-sm tracking-widest text-indigo-200">PIXAR</div>
+                        <span class="text-[10px] text-gray-400 leading-tight">Thám tử trí tuệ, bóc trần việc làm ảo</span>
+                    </div>
+                    <div onclick="selectHouse('Nhà Marvel - Biệt Đội An Ninh', this)" class="brand-hub-card card-3d-tilt active-hub p-3.5 md:p-4 flex flex-col items-center justify-center text-center gap-1.5 group">
+                        <span class="text-3xl group-hover:scale-125 transition duration-300">🛡️</span>
+                        <div class="font-black text-xs md:text-sm tracking-widest text-red-400">MARVEL</div>
+                        <span class="text-[10px] text-gray-200 leading-tight">Avenger số, đập tan công an giả mạo</span>
+                    </div>
+                    <div onclick="selectHouse('Nhà Star Wars - Két Sắt OTP', this)" class="brand-hub-card card-3d-tilt p-3.5 md:p-4 flex flex-col items-center justify-center text-center gap-1.5 group">
+                        <span class="text-3xl group-hover:scale-125 transition duration-300">⚔️</span>
+                        <div class="font-black text-xs md:text-sm tracking-widest text-yellow-300">STAR WARS</div>
+                        <span class="text-[10px] text-gray-400 leading-tight">Lá chắn tử thủ, bảo vệ mã OTP két sắt</span>
+                    </div>
+                    <div onclick="selectHouse('Nhà Nat Geo - Kính Soi Nghiệp Vụ', this)" class="brand-hub-card card-3d-tilt p-3.5 md:p-4 flex flex-col items-center justify-center text-center gap-1.5 group col-span-2 sm:col-span-1">
+                        <span class="text-3xl group-hover:scale-125 transition duration-300">🔍</span>
+                        <div class="font-black text-xs md:text-sm tracking-wider text-amber-400">NAT GEO</div>
+                        <span class="text-[10px] text-gray-400 leading-tight">Thiên nhãn nghiệp vụ, phân tích bằng chứng</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODE SELECTOR -->
+            <div id="modeSection" class="pt-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                    <div onclick="setPlayMode('BOSS_RPG')" id="modeBossCard" class="card-3d-tilt p-5 md:p-6 rounded-2xl border-2 border-cyan-400 bg-gradient-to-b from-blue-950/70 to-black/90 cursor-pointer transition relative overflow-hidden shadow-2xl">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-cyan-400 text-black">
+                                CHẾ ĐỘ 1: BATTLE PASS RPG
+                            </span>
+                            <span class="text-2xl">⚔️</span>
+                        </div>
+                        <h4 class="text-base md:text-lg font-black text-white mb-1">Đại Chiến Ma Vương RPG (Solo HP 100)</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed mb-3">
+                            Bạn và Ma Vương mỗi bên có 100 HP. Trả lời đúng xuất chưởng trừ máu Boss. Trả lời sai bị trúng đòn mà <strong>KHÔNG BỊ LỘ ĐÁP ÁN ĐÚNG</strong>!
+                        </p>
+                        <div class="text-[11px] font-bold text-cyan-300 flex items-center gap-1.5">
+                            <i data-lucide="check" class="w-4 h-4"></i> Phù hợp chơi cá nhân, thử thách sinh tồn
+                        </div>
+                    </div>
+
+                    <div onclick="setPlayMode('GAME_SHOW')" id="modeGameShowCard" class="card-3d-tilt p-5 md:p-6 rounded-2xl border border-white/15 bg-gradient-to-b from-gray-900/60 to-black/90 cursor-pointer transition hover:border-white/40 relative overflow-hidden shadow-xl">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-white/10 text-gray-300">
+                                CHẾ ĐỘ 2: LIVE STREAM SHOW
+                            </span>
+                            <span class="text-2xl">🏆</span>
+                        </div>
+                        <h4 class="text-base md:text-lg font-black text-white mb-1">Đấu Trường Tốc Độ Game Show (Combo Streak)</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed mb-3">
+                            Đua bảng xếp hạng lớp học theo thời gian thực! Trả lời đúng liên tiếp kích hoạt <strong>Combo Streak x2, x3 điểm</strong>.
+                        </p>
+                        <div class="text-[11px] font-bold text-gray-400 flex items-center gap-1.5">
+                            <i data-lucide="zap" class="w-4 h-4"></i> Phù hợp thi đấu trực tiếp trên hội trường lớp
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: 4K MEDIA PLAYER QUIZ ARENA -->
+        <div id="quizScreen" class="hidden disney-player-card card-3d-tilt max-w-4xl w-full p-4 md:p-10">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10 mb-5">
+                <div class="flex items-center gap-2.5">
+                    <span id="roundBadge" class="px-3 py-1 rounded-full text-[11px] md:text-xs font-black uppercase tracking-widest bg-blue-600 text-white shadow-lg">
+                        TẬP TRUYỀN HÌNH SỐ 1
+                    </span>
+                    <span id="questionCounter" class="text-xs font-mono font-bold text-cyan-400">TẬP 1 / 10</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1.5 bg-black/60 px-3 py-1 rounded-full border border-white/15">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        <span id="timerText" class="font-mono text-sm md:text-base font-black text-cyan-300">15s</span>
+                    </div>
+                    <div class="text-xs font-extrabold text-gray-300 truncate max-w-[120px] md:max-w-none">
+                        <span id="hudPlayerName" class="text-white"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boss Battle HP Bar -->
+            <div id="bossBattleHud" class="mb-5 space-y-2">
+                <div class="flex justify-between text-xs font-bold">
+                    <span class="text-cyan-400 flex items-center gap-1"><i data-lucide="shield" class="w-3.5 h-3.5"></i> Sinh Viên: <span id="playerHpText">100 / 100</span></span>
+                    <span class="text-red-400 flex items-center gap-1"><i data-lucide="skull" class="w-3.5 h-3.5"></i> Ma Vương: <span id="bossHpText">100 / 100</span></span>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="w-full bg-gray-900 rounded-full h-3 p-0.5 border border-cyan-500/40">
+                        <div id="playerHpBar" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full transition-all duration-300" style="width: 100%;"></div>
+                    </div>
+                    <div class="w-full bg-gray-900 rounded-full h-3 p-0.5 border border-red-500/40">
+                        <div id="bossHpBar" class="bg-gradient-to-r from-red-600 to-rose-400 h-full rounded-full transition-all duration-300 ml-auto" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Show Score HUD -->
+            <div id="gameShowHud" class="hidden mb-5 flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/10">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🔥</span>
+                    <span id="comboStreakText" class="text-xs font-black uppercase text-amber-300">0x Combo Streak</span>
+                </div>
+                <div class="text-xs md:text-sm font-black text-cyan-400">
+                    Điểm số: <span id="gameShowScoreText" class="text-lg md:text-xl text-white">0</span>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <span id="questionCategory" class="text-xs font-bold uppercase tracking-wider text-cyan-400 block mb-1">Chủ đề: Công An Giả Mạo</span>
+                <h3 id="questionText" class="text-base md:text-2xl font-bold text-white leading-relaxed">
+                    Đang nạp câu hỏi...
+                </h3>
+            </div>
+
+            <!-- Options Container -->
+            <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5"></div>
+
+            <!-- Feedback Alert (Strict No Spoiler) -->
+            <div id="feedbackBox" class="hidden rounded-2xl p-4 md:p-5 mb-5 border text-xs md:text-sm leading-relaxed">
+                <div class="flex items-center gap-2 font-black text-sm md:text-base mb-1">
+                    <span id="feedbackIcon">⚡</span>
+                    <span id="feedbackTitle">KẾT QUẢ THỬ THÁCH</span>
+                </div>
+                <p id="feedbackText"></p>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="button" id="nextQuestionBtn" onclick="nextQuestion()" class="hidden btn-disney-blue px-7 py-3 md:px-8 md:py-3.5 rounded-xl text-white font-black text-xs md:text-sm uppercase tracking-wider flex items-center gap-2 shadow-xl">
+                    <span id="nextQuestionBtnText">Tập Phim Tiếp Theo</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: DISNEY+ VIP CERTIFICATE -->
+        <div id="resultScreen" class="hidden disney-player-card card-3d-tilt max-w-3xl w-full p-6 md:p-12 text-center">
+            <div class="text-4xl md:text-5xl mb-2 animate-bounce">👑</div>
+            <h2 class="text-2xl md:text-5xl font-black text-white mb-1">
+                BẰNG KHEN HOÀNG GIA DISNEY+
+            </h2>
+            <p class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-6">
+                ~ Hall of Fame: Hiệp Sĩ An Ninh Mạng 2026 ~
+            </p>
+
+            <div class="bg-gradient-to-b from-blue-950/60 via-black to-blue-950/60 rounded-3xl p-5 md:p-8 border border-white/20 mb-6 shadow-2xl">
+                <p class="text-[10px] md:text-xs uppercase tracking-widest text-gray-400 font-bold mb-1">HỌC VIỆN CẢNH GIÁC SỐ TUYÊN DƯƠNG</p>
+                <h3 id="certPlayerName" class="text-xl md:text-4xl font-black text-cyan-300 mb-2"></h3>
+                <div id="certHouseBadge" class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs text-gray-200 font-bold mb-2"></div>
+                <div id="certModeBadge" class="block text-[11px] text-gray-400 font-mono mb-4"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-4">
+                    <div class="bg-black/50 p-4 md:p-5 rounded-2xl border border-white/10">
+                        <div class="text-xs text-gray-400">Tổng Điểm Nghiệp Vụ</div>
+                        <div id="finalScore" class="text-2xl md:text-4xl font-black text-cyan-400 mt-1">100 / 100</div>
+                    </div>
+                    <div class="bg-black/50 p-4 md:p-5 rounded-2xl border border-white/10">
+                        <div class="text-xs text-gray-400">Cấp Bậc Đạt Được</div>
+                        <div id="rankTitle" class="text-xs md:text-base font-extrabold text-amber-300 mt-1"></div>
+                    </div>
+                </div>
+
+                <p id="rankDescription" class="text-xs md:text-sm text-gray-300 italic max-w-lg mx-auto leading-relaxed"></p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <button type="button" onclick="window.print()" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 font-bold text-xs md:text-sm flex items-center gap-2 transition">
+                    <i data-lucide="printer" class="w-4 h-4"></i> In Bằng Khen (PDF)
+                </button>
+                <button type="button" onclick="restartGame()" class="btn-disney-blue px-7 py-3 rounded-xl font-black text-white text-xs md:text-sm uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Thi Đấu Ván Mới (Xáo Đề)
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL: QR CODE -->
+    <div id="classroomModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+        <div class="disney-player-card card-3d-tilt max-w-lg w-full p-6 md:p-8 text-center relative border-white/20 shadow-2xl">
+            <button type="button" onclick="closeClassroomModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <span class="text-3xl md:text-4xl mb-1 inline-block">📱</span>
+            <h3 class="text-lg md:text-xl font-black text-white mb-1">MÃ QUÉT KẾT NỐI ĐIỆN THOẠI</h3>
+            <p class="text-xs text-gray-300 mb-4">Mở camera điện thoại quét mã QR bên dưới để mở web trực tiếp</p>
+            
+            <div class="w-56 h-56 mx-auto p-3 bg-white rounded-2xl shadow-2xl flex items-center justify-center mb-4">
+                <img id="qrCodeImg" src="" alt="Mã QR Phòng Thi" class="w-full h-full object-contain">
+            </div>
+
+            <div class="space-y-2.5">
+                <div class="flex items-center gap-2 bg-gray-900 p-2 rounded-xl border border-white/15">
+                    <input type="text" id="shareLinkInput" readonly value="" class="w-full bg-transparent text-xs text-cyan-300 outline-none px-2 font-mono">
+                    <button type="button" onclick="copyShareLink()" class="px-4 py-2 rounded-lg btn-disney-blue text-white font-bold text-xs shrink-0 flex items-center gap-1">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Chép Link
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toastBox" class="fixed bottom-6 right-6 z-50 bg-blue-600 border border-cyan-300 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-xs font-bold transition-all duration-300 translate-y-32">
+        <i data-lucide="check-circle" class="w-4 h-4 text-cyan-200"></i>
+        <span id="toastMsg">Thao tác thành công!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-20 py-4 text-center text-xs text-gray-500 border-t border-white/10 bg-[#040714]">
+        © 2026 Đồ Án Phòng Chống Lừa Đảo Sinh Viên • Đại Học HUTECH • Level 7 Web Design
+    </footer>
+
+    <!-- LOGIC SCRIPTS (100% CLEAN SYNTAX - ZERO ERRORS) -->
+    <script>
+        var soundEnabled = true;
+        var voiceEnabled = true;
+        var audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // Auto unlock Audio on First Mobile Touch
+        ['click', 'touchstart'].forEach(function(evt) {
+            document.addEventListener(evt, function() {
+                getAudioContext();
+            }, { once: true });
+        });
+
+        function triggerHaptic(type) {
+            if ('vibrate' in navigator) {
+                try {
+                    if (type === 'correct') navigator.vibrate([30, 20, 50]);
+                    else if (type === 'wrong') navigator.vibrate([120]);
+                } catch(e) {}
+            }
+        }
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            document.getElementById('voiceStatusText').innerText = voiceEnabled ? "Giọng AI: BẬT" : "Giọng AI: TẮT";
+            showToast(voiceEnabled ? "Đã bật giọng đọc AI Hoàng gia!" : "Đã tắt giọng đọc AI!");
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            var btn = document.getElementById('soundToggleBtn');
+            btn.innerHTML = soundEnabled ? '<i data-lucide="volume-2" class="w-4 h-4"></i>' : '<i data-lucide="volume-x" class="w-4 h-4"></i>';
+            lucide.createIcons();
+            showToast(soundEnabled ? "Đã bật âm thanh!" : "Đã tắt âm thanh!");
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            var ctx = getAudioContext();
+            if (!ctx) return;
+            try {
+                var now = ctx.currentTime;
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'hit-boss') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.exponentialRampToValueAtTime(220, now + 0.25);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now); osc.stop(now + 0.25);
+                } else if (type === 'hit-player') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(50, now + 0.35);
+                    gain.gain.setValueAtTime(0.35, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.start(now); osc.stop(now + 0.35);
+                } else if (type === 'correct') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach(function(freq, idx) {
+                        var o = ctx.createOscillator();
+                        var g = ctx.createGain();
+                        o.connect(g); g.connect(ctx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.08);
+                        g.gain.setValueAtTime(0.15, now + idx * 0.08);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+                        o.start(now + idx * 0.08); o.stop(now + idx * 0.08 + 0.3);
+                    });
+                } else if (type === 'fanfare') {
+                    [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach(function(freq, idx) {
+                        var o = ctx.createOscillator();
+                        var g = ctx.createGain();
+                        o.type = 'triangle';
+                        o.connect(g); g.connect(ctx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.1);
+                        g.gain.setValueAtTime(0.2, now + idx * 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
+                        o.start(now + idx * 0.1); o.stop(now + idx * 0.1 + 0.4);
+                    });
+                } else if (type === 'tick') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now);
+                    gain.gain.setValueAtTime(0.04, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now); osc.stop(now + 0.05);
+                }
+            } catch(e) {}
+        }
+
+        function speakRoyalWelcome(name, house) {
+            if (!voiceEnabled || !('speechSynthesis' in window)) return;
+            try {
+                window.speechSynthesis.cancel();
+                var text = "Disney Plus Defender nhiệt liệt chào mừng Hiệp sĩ " + name + " thuộc " + house + "! Hãy giương cao thanh gươm tỉnh táo, bóc trần mọi cạm bẫy của Ma Vương lừa đảo!";
+                var utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'vi-VN';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.05;
+                setTimeout(function() {
+                    window.speechSynthesis.speak(utterance);
+                }, 500);
+            } catch(e) {}
+        }
+
+        // DATABASE: 10 CÂU HỎI TRẮC NGHIỆM CHUẨN
+        var rawQuizQuestions = [
+            {
+                category: "Công An Giả Mạo",
+                question: "Khi nhận được cuộc gọi tự xưng là công an và thông báo bạn liên quan đến một vụ án, bạn nên làm gì?",
+                options: [
+                    "Cung cấp thông tin cá nhân để chứng minh mình vô tội.",
+                    "Chuyển tiền theo yêu cầu để xác minh tài khoản.",
+                    "Bình tĩnh, ngắt cuộc gọi và liên hệ cơ quan công an qua kênh chính thức.",
+                    "Làm theo mọi hướng dẫn của người gọi."
+                ],
+                correctText: "Bình tĩnh, ngắt cuộc gọi và liên hệ cơ quan công an qua kênh chính thức.",
+                safeAdvice: "Công an Việt Nam luôn làm việc trực tiếp tại trụ sở có giấy triệu tập, KHÔNG BAO GIỜ gọi điện thoại yêu cầu chuyển tiền hay chứng minh tài chính qua ngân hàng!",
+                wrongWarning: "CẢNH BÁO BẪY LỪA: Lựa chọn của bạn đã rơi vào bẫy tâm lý sợ hãi! Tuyệt đối không cung cấp thông tin hay chuyển bất kỳ khoản tiền nào qua điện thoại."
+            },
+            {
+                category: "Dấu Hiệu Lừa Đảo",
+                question: "Dấu hiệu nào sau đây thường xuất hiện trong các tin nhắn lừa đảo?",
+                options: [
+                    "Yêu cầu cung cấp mã OTP.",
+                    "Thông báo trúng thưởng bất ngờ.",
+                    "Gửi đường link lạ yêu cầu đăng nhập tài khoản.",
+                    "Tất cả các đáp án trên."
+                ],
+                correctText: "Tất cả các đáp án trên.",
+                safeAdvice: "Ba 'vũ khí độc' của kẻ lừa đảo: Đánh vào lòng tham (trúng thưởng), dụ dỗ click link lạ và cướp mã OTP vét sạch tài khoản ngân hàng!",
+                wrongWarning: "CẢNH BÁO BẪY LỪA: Bạn đã bỏ sót dấu hiệu nguy hiểm! Kẻ gian thường kết hợp đồng thời cả trúng thưởng ảo, link giả mạo và yêu cầu OTP."
+            },
+            {
+                category: "Bảo Mật Cốt Lõi",
+                question: "Mã OTP được sử dụng chủ yếu để làm gì?",
+                options: [
+                    "Xác minh giao dịch hoặc đăng nhập.",
+                    "Xác minh thông tin tài khoản.",
+                    "Chia sẻ mật khẩu với người khác.",
+                    "Nhận tiền từ người lạ."
+                ],
+                correctText: "Xác minh giao dịch hoặc đăng nhập.",
+                safeAdvice: "Mã OTP là chìa khóa két sắt cuối cùng của bạn. Bất kỳ ai đòi mã OTP, kể cả xưng là nhân viên ngân hàng, 100% là kẻ lừa đảo!",
+                wrongWarning: "CẢNH BÁO BẪY LỪA: Hiểu sai công dụng của OTP sẽ khiến bạn mất trắng tiền trong tài khoản chỉ sau 1 giây!"
+            },
+            {
+                category: "Bẫy Lòng Tham",
+                question: "Bạn nhận được tin nhắn thông báo trúng thưởng điện thoại 20 triệu nhưng phải đóng 500.000đ phí nhận. Đây là hình thức gì?",
+                options: [
+                    "Lừa đảo trúng thưởng.",
+                    "Lừa đảo tuyển dụng.",
+                    "Lừa đảo tình cảm.",
+                    "Lừa đảo đầu tư."
+                ],
+                correctText: "Lừa đảo trúng thưởng.",
+                safeAdvice: "Miếng phô mai miễn phí chỉ có trong bẫy chuột. Đóng 500k phí ship xong kẻ gian sẽ chặn số và bạn không bao giờ nhận được điện thoại!",
+                wrongWarning: "CẢNH BÁO BẪY LỪA: Đừng để phần thưởng ảo làm mờ mắt! Yêu cầu chuyển phí trước khi nhận quà 100% là bẫy lừa trúng thưởng."
+            },
+            {
+                category: "An Toàn Tài Khoản",
+                question: "Hành động nào sau đây giúp bảo vệ tài khoản ngân hàng an toàn nhất?",
+                options: [
+                    "Sử dụng cùng một mật khẩu cho tất cả tài khoản.",
+                    "Chia sẻ mã OTP với người thân.",
+                    "Đặt mật khẩu mạnh và bật xác thực bảo mật nhiều lớp.",
+                    "Lưu mật khẩu ngân hàng trong tin nhắn điện thoại."
+                ],
+                correctText: "Đặt mật khẩu mạnh và bật xác thực bảo mật nhiều lớp.",
+                safeAdvice: "Bật xác thực sinh trắc học và bảo mật 2 lớp (2FA) giúp bảo vệ bạn an toàn ngay cả khi vô tình để lộ mật khẩu!",
+                wrongWarning: "CẢNH BÁO NGUY HIỂM: Thói quen dùng chung mật khẩu hoặc lưu vào tin nhắn sẽ khiến toàn bộ tài khoản của bạn bị hack hàng loạt!"
+            },
+            {
+                category: "Bẫy Đầu Tư Siêu Lợi Nhuận",
+                question: "Người lạ đề nghị đầu tư 1 triệu đồng và cam kết nhận lại 5 triệu đồng sau 3 ngày. Bạn nên làm gì?",
+                options: [
+                    "Đầu tư ngay vì lợi nhuận cao.",
+                    "Vay tiền để đầu tư nhiều hơn.",
+                    "Rủ bạn bè cùng tham gia.",
+                    "Cảnh giác, kiểm tra tính xác thực và không chuyển tiền khi chưa xác minh."
+                ],
+                correctText: "Cảnh giác, kiểm tra tính xác thực và không chuyển tiền khi chưa xác minh.",
+                safeAdvice: "Lợi nhuận 500% sau 3 ngày chỉ có bẫy lừa Ponzi. Nạp 1 triệu sẽ bị ép nạp thêm 10 triệu để rút tiền, cuối cùng mất trắng toàn bộ!",
+                wrongWarning: "CẢNH BÁO BẪY LỪA: Lao vào đầu tư siêu lợi nhuận là con đường ngắn nhất dẫn đến nợ nần và tín dụng đen sinh viên!"
+            },
+            {
+                category: "Deepfake AI",
+                question: "Hình thức sử dụng AI giả giọng nói hoặc khuôn mặt người thân mượn tiền gọi là gì?",
+                options: [
+                    "Lừa đảo qua email.",
+                    "Lừa đảo bằng Deepfake.",
+                    "Lừa đảo qua quảng cáo.",
+                    "Lừa đảo trúng thưởng."
+                ],
+                correctText: "Lừa đảo bằng Deepfake.",
+                safeAdvice: "Công nghệ Deepfake hoán đổi khuôn mặt và bắt chước giọng nói rất tinh vi. Cách hóa giải: Hãy gọi điện thoại thông thường hoặc hỏi 1 câu hỏi bí mật chỉ 2 người biết!",
+                wrongWarning: "CẢNH BÁO BẪY LỪA: Đừng nhầm lẫn! Tội phạm công nghệ cao hiện nay dùng chính AI Deepfake để đánh vào tình cảm gia đình."
+            },
+            {
+                category: "Phishing Link Độc Hại",
+                question: "Khi nhận được đường link yêu cầu đăng nhập tài khoản ngân hàng nhận quà, bạn nên làm gì?",
+                options: [
+                    "Nhấn vào link và đăng nhập ngay.",
+                    "Chuyển tiếp cho bạn bè cùng nhận quà.",
+                    "Không truy cập link, kiểm tra thông tin qua website hoặc ứng dụng chính thức.",
+                    "Nhập thử thông tin để kiểm tra."
+                ],
+                correctText: "Không truy cập link, kiểm tra thông tin qua website hoặc ứng dụng chính thức.",
+                safeAdvice: "Link giả mạo có giao diện y hệt ngân hàng nhưng sai 1 ký tự tên miền. Nhập tài khoản mật khẩu là bạn tự dâng két sắt cho hacker!",
+                wrongWarning: "CẢNH BÁO NGUY HIỂM: Tuyệt đối không click hoặc nhập thử thông tin vào link lạ trên mạng xã hội!"
+            },
+            {
+                category: "Cứu Hộ Khẩn Cấp",
+                question: "Nếu chẳng may chuyển tiền cho đối tượng lừa đảo, việc đầu tiên bạn nên làm là gì?",
+                options: [
+                    "Xóa toàn bộ tin nhắn để tránh bị lộ thông tin.",
+                    "Liên hệ ngay ngân hàng để yêu cầu hỗ trợ và trình báo cơ quan công an.",
+                    "Chờ đối tượng hoàn trả tiền.",
+                    "Tiếp tục chuyển tiền để lấy lại khoản đã mất."
+                ],
+                correctText: "Liên hệ ngay ngân hàng để yêu cầu hỗ trợ và trình báo cơ quan công an.",
+                safeAdvice: "15 phút vàng: Gọi ngay hotline ngân hàng để khóa và phong tỏa tài khoản thụ hưởng, đồng thời giữ nguyên tin nhắn đến công an trình báo!",
+                wrongWarning: "CẢNH BÁO TAI HẠI: Càng chuyển thêm tiền để 'chuộc lại' hoặc xóa tin nhắn sẽ khiến bạn mất trắng mọi cơ hội lấy lại tài sản!"
+            },
+            {
+                category: "Kim Chỉ Nam Toàn Năng",
+                question: "Nguyên tắc quan trọng nhất để phòng tránh lừa đảo trên không gian mạng là gì?",
+                options: [
+                    "Không tin bất kỳ ai trên mạng.",
+                    "Không sử dụng Internet.",
+                    "Luôn kiểm tra, xác minh thông tin trước khi cung cấp dữ liệu hoặc chuyển tiền.",
+                    "Chỉ tin những người có ảnh đại diện đẹp và tài khoản lâu năm."
+                ],
+                correctText: "Luôn kiểm tra, xác minh thông tin trước khi cung cấp dữ liệu hoặc chuyển tiền.",
+                safeAdvice: "Khắc cốt ghi tâm: CHẬM LẠI 30 GIÂY - XÁC MINH TRƯỚC KHI CHUYỂN TIỀN. Sự tỉnh táo chính là tấm khiên bất khả chiến bại của sinh viên!",
+                wrongWarning: "CẢNH BÁO BẪY LỪA: Ảnh đại diện đẹp hay tài khoản ảo đều có thể mua được bằng tiền. Đừng bao giờ đặt niềm tin mà không xác minh!"
+            }
+        ];
+
+        function shuffleArray(arr) {
+            for (var i = arr.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+            return arr;
+        }
+
+        // GAME STATE
+        var currentMode = "BOSS_RPG";
+        var currentQuestions = [];
+        var playerName = "Võ Hữu Trí - 23DTHC7";
+        var chosenHouse = "Nhà Marvel - Biệt Đội An Ninh";
+        var currentQuestionIdx = 0;
+        var score = 0;
+        var playerHp = 100;
+        var bossHp = 100;
+        var comboStreak = 0;
+        var timerInterval = null;
+        var timeLeft = 15;
+
+        function setPlayMode(mode) {
+            currentMode = mode;
+            var bCard = document.getElementById('modeBossCard');
+            var gCard = document.getElementById('modeGameShowCard');
+            var startTxt = document.getElementById('startBtnText');
+
+            if (mode === 'BOSS_RPG') {
+                bCard.className = "card-3d-tilt p-5 md:p-6 rounded-2xl border-2 border-cyan-400 bg-gradient-to-b from-blue-950/70 to-black/90 cursor-pointer transition relative overflow-hidden shadow-2xl";
+                gCard.className = "card-3d-tilt p-5 md:p-6 rounded-2xl border border-white/15 bg-gradient-to-b from-gray-900/60 to-black/90 cursor-pointer transition hover:border-white/40 relative overflow-hidden shadow-xl";
+                startTxt.innerText = "BẮT ĐẦU CHIẾN BOSS RPG";
+            } else {
+                gCard.className = "card-3d-tilt p-5 md:p-6 rounded-2xl border-2 border-cyan-400 bg-gradient-to-b from-blue-950/70 to-black/90 cursor-pointer transition relative overflow-hidden shadow-2xl";
+                bCard.className = "card-3d-tilt p-5 md:p-6 rounded-2xl border border-white/15 bg-gradient-to-b from-gray-900/60 to-black/90 cursor-pointer transition hover:border-white/40 relative overflow-hidden shadow-xl";
+                startTxt.innerText = "BẮT ĐẦU ĐẤU TRƯỜNG TỐC ĐỘ";
+            }
+            playSound('correct');
+        }
+
+        function selectHouse(house, cardElement) {
+            chosenHouse = house;
+            var allHubs = document.querySelectorAll('.brand-hub-card');
+            for (var i = 0; i < allHubs.length; i++) {
+                allHubs[i].classList.remove('active-hub');
+            }
+            cardElement.classList.add('active-hub');
+            document.getElementById('currentHouseDisplay').innerText = "Đang chọn: " + house;
+            playSound('correct');
+        }
+
+        function startGame() {
+            getAudioContext();
+            var input = document.getElementById('playerNameInput').value.trim();
+            if (input) playerName = input;
+
+            document.getElementById('hudPlayerName').innerText = playerName;
+
+            currentQuestions = JSON.parse(JSON.stringify(rawQuizQuestions));
+            shuffleArray(currentQuestions);
+            for (var i = 0; i < currentQuestions.length; i++) {
+                shuffleArray(currentQuestions[i].options);
+                currentQuestions[i].roundNumber = i + 1;
+            }
+
+            currentQuestionIdx = 0;
+            score = 0;
+            playerHp = 100;
+            bossHp = 100;
+            comboStreak = 0;
+
+            if (currentMode === 'BOSS_RPG') {
+                document.getElementById('bossBattleHud').classList.remove('hidden');
+                document.getElementById('gameShowHud').classList.add('hidden');
+                document.getElementById('roundBadge').innerText = 'ĐẠI CHIẾN BOSS RPG';
+                updateHpBars();
+            } else {
+                document.getElementById('bossBattleHud').classList.add('hidden');
+                document.getElementById('gameShowHud').classList.remove('hidden');
+                document.getElementById('roundBadge').innerText = 'ĐẤU TRƯỜNG TỐC ĐỘ';
+                updateGameShowHud();
+            }
+
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+
+            playSound('fanfare');
+            speakRoyalWelcome(playerName, chosenHouse);
+            loadQuestion();
+        }
+
+        function updateHpBars() {
+            document.getElementById('playerHpText').innerText = playerHp + " / 100";
+            document.getElementById('bossHpText').innerText = bossHp + " / 100";
+            document.getElementById('playerHpBar').style.width = Math.max(0, playerHp) + "%";
+            document.getElementById('bossHpBar').style.width = Math.max(0, bossHp) + "%";
+        }
+
+        function updateGameShowHud() {
+            var multiplier = comboStreak >= 3 ? 3 : (comboStreak >= 2 ? 2 : 1);
+            document.getElementById('comboStreakText').innerText = comboStreak + "x Combo (Điểm x" + multiplier + ")";
+            document.getElementById('gameShowScoreText').innerText = score;
+        }
+
+        function loadQuestion() {
+            clearInterval(timerInterval);
+            timeLeft = 15;
+            updateTimerDisplay();
+
+            var q = currentQuestions[currentQuestionIdx];
+            document.getElementById('questionCounter').innerText = "TẬP " + (currentQuestionIdx + 1) + " / " + currentQuestions.length;
+            document.getElementById('questionCategory').innerText = "Chủ đề: " + q.category;
+            document.getElementById('questionText').innerText = "Câu " + q.roundNumber + ". " + q.question;
+
+            var container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            document.getElementById('feedbackBox').classList.add('hidden');
+            document.getElementById('nextQuestionBtn').classList.add('hidden');
+
+            var prefixes = ["A. ", "B. ", "C. ", "D. "];
+            q.options.forEach(function(optText, idx) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "disney-option-btn w-full text-left p-3.5 md:p-4 rounded-xl font-medium text-xs md:text-base flex items-start gap-2.5";
+                btn.innerHTML = '<strong class="text-cyan-400 font-bold shrink-0">' + prefixes[idx] + '</strong><span>' + optText + '</span>';
+                btn.onclick = function() { selectOption(optText, btn); };
+                container.appendChild(btn);
+            });
+
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 5 && timeLeft > 0) playSound('tick');
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            var el = document.getElementById('timerText');
+            el.innerText = timeLeft + "s";
+            if (timeLeft <= 5) el.className = "font-mono text-sm md:text-base font-black text-rose-500 animate-pulse";
+            else el.className = "font-mono text-sm md:text-base font-black text-cyan-300";
+        }
+
+        function handleTimeOut() {
+            playSound('hit-player');
+            triggerHaptic('wrong');
+            comboStreak = 0;
+
+            if (currentMode === 'BOSS_RPG') {
+                playerHp = Math.max(0, playerHp - 15);
+                updateHpBars();
+            } else {
+                updateGameShowHud();
+            }
+
+            var allBtns = document.getElementById('optionsContainer').children;
+            for (var i = 0; i < allBtns.length; i++) {
+                allBtns[i].disabled = true;
+            }
+
+            var fbBox = document.getElementById('feedbackBox');
+            fbBox.classList.remove('hidden');
+            fbBox.className = "rounded-2xl p-4 md:p-5 mb-5 border bg-rose-950/80 border-rose-500 text-rose-200 text-xs md:text-sm leading-relaxed";
+            document.getElementById('feedbackIcon').innerText = "⏰";
+            document.getElementById('feedbackTitle').innerText = "HẾT GIỜ! BỎ LỠ CƠ HỘI PHÒNG THỦ";
+            document.getElementById('feedbackText').innerText = "Do dự quá lâu đã khiến kẻ gian có cơ hội thao túng tình thế. (Hãy phản xạ nhanh hơn ở câu sau!)";
+            
+            checkIsLastQuestion();
+            document.getElementById('nextQuestionBtn').classList.remove('hidden');
+        }
+
+        function selectOption(chosenText, btnElement) {
+            clearInterval(timerInterval);
+            var q = currentQuestions[currentQuestionIdx];
+            var allBtns = document.getElementById('optionsContainer').children;
+            for (var i = 0; i < allBtns.length; i++) {
+                allBtns[i].disabled = true;
+            }
+
+            var fbBox = document.getElementById('feedbackBox');
+            fbBox.classList.remove('hidden');
+
+            if (chosenText === q.correctText) {
+                playSound('correct');
+                triggerHaptic('correct');
+                comboStreak++;
+                var multiplier = comboStreak >= 3 ? 3 : (comboStreak >= 2 ? 2 : 1);
+                score += 10 * multiplier;
+
+                if (currentMode === 'BOSS_RPG') {
+                    playSound('hit-boss');
+                    bossHp = Math.max(0, bossHp - 10);
+                    updateHpBars();
+                    document.getElementById('feedbackIcon').innerText = "⚡";
+                    document.getElementById('feedbackTitle').innerText = "XUẤT CHƯỞNG ĐIỆN QUANG! (-10 HP MA VƯƠNG)";
+                } else {
+                    updateGameShowHud();
+                    document.getElementById('feedbackIcon').innerText = "🔥";
+                    document.getElementById('feedbackTitle').innerText = "CHÍNH XÁC! COMBO x" + multiplier + " (+" + (10 * multiplier) + " ĐIỂM)";
+                }
+
+                btnElement.classList.add('bg-emerald-700', 'border-emerald-400', 'text-white');
+                fbBox.className = "rounded-2xl p-4 md:p-5 mb-5 border bg-emerald-950/80 border-emerald-500 text-emerald-200 text-xs md:text-sm leading-relaxed";
+                document.getElementById('feedbackText').innerText = q.safeAdvice;
+                confetti({ particleCount: 30, spread: 60 });
+            } else {
+                // STRICT NO SPOILER: Chỉ báo đỏ đáp án sai, KHÔNG tô xanh đáp án đúng!
+                playSound('hit-player');
+                triggerHaptic('wrong');
+                comboStreak = 0;
+
+                if (currentMode === 'BOSS_RPG') {
+                    playerHp = Math.max(0, playerHp - 15);
+                    updateHpBars();
+                    document.getElementById('feedbackIcon').innerText = "💥";
+                    document.getElementById('feedbackTitle').innerText = "DÍNH BẪY MA VƯƠNG! BẠN BỊ MẤT MÁU (-15 HP)";
+                } else {
+                    updateGameShowHud();
+                    document.getElementById('feedbackIcon').innerText = "⚠️";
+                    document.getElementById('feedbackTitle').innerText = "BẠN ĐÃ MẮC PHẢI BẪY LỪA!";
+                }
+
+                btnElement.classList.add('bg-rose-900', 'border-rose-500', 'text-white');
+                fbBox.className = "rounded-2xl p-4 md:p-5 mb-5 border bg-rose-950/80 border-rose-500 text-rose-200 text-xs md:text-sm leading-relaxed";
+                document.getElementById('feedbackText').innerText = q.wrongWarning;
+            }
+
+            checkIsLastQuestion();
+            document.getElementById('nextQuestionBtn').classList.remove('hidden');
+        }
+
+        function checkIsLastQuestion() {
+            var nextBtnText = document.getElementById('nextQuestionBtnText');
+            if (currentQuestionIdx === currentQuestions.length - 1) {
+                nextBtnText.innerText = "Xem Bằng Khen Hoàng Gia 👑";
+            } else {
+                nextBtnText.innerText = "Tập Phim Tiếp Theo";
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showResultScreen();
+            }
+        }
+
+        function showResultScreen() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            playSound('fanfare');
+            triggerHaptic('correct');
+            confetti({ particleCount: 160, spread: 100 });
+
+            document.getElementById('certPlayerName').innerText = playerName;
+            document.getElementById('certHouseBadge').innerText = chosenHouse;
+            document.getElementById('certModeBadge').innerText = (currentMode === 'BOSS_RPG') ? "HOÀN THÀNH: ĐẠI CHIẾN BOSS RPG" : "HOÀN THÀNH: ĐẤU TRƯỜNG GAME SHOW";
+            document.getElementById('finalScore').innerText = score + " Điểm";
+
+            var rank = "HIỆP SĨ TẬP SỰ CẢNH GIÁC 🛡️";
+            var desc = "Bạn đã có bước khởi đầu can đảm. Hãy thi đấu lại để diệt sạch máu Ma Vương và đạt điểm số tuyệt đối 100 nhé!";
+
+            if (score >= 90) {
+                rank = "ĐẠI THẦN BẢO VỆ HOÀNG GIA 👑";
+                desc = "Vô tiền khoáng hậu! Bạn đã hạ gục hoàn toàn Ma Vương Lừa Đảo, sở hữu tấm khiên bất khả xâm phạm trước mọi thủ đoạn công an giả mạo và bẫy OTP!";
+            } else if (score >= 70) {
+                rank = "HIỆP SĨ TINH ANH CẢNH GIÁC ⚔️";
+                desc = "Rất kiên cường! Bạn đã đánh trúng nhiều điểm yếu của Ma Vương và luôn giữ được cái đầu lạnh khi nhận tin nhắn lạ!";
+            }
+
+            document.getElementById('rankTitle').innerText = rank;
+            document.getElementById('rankDescription').innerText = '"' + desc + '"';
+        }
+
+        function restartGame() {
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+
+        function openClassroomModal() {
+            var url = window.location.href;
+            document.getElementById('shareLinkInput').value = url;
+            document.getElementById('qrCodeImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(url) + "&color=0-99-229";
+            document.getElementById('classroomModal').classList.remove('hidden');
+            playSound('tick');
+        }
+
+        function closeClassroomModal() {
+            document.getElementById('classroomModal').classList.add('hidden');
+        }
+
+        function copyShareLink() {
+            var copyText = document.getElementById('shareLinkInput');
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            showToast("Đã chép link phòng thi vào bộ nhớ tạm!");
+            playSound('correct');
+        }
+
+        function showToast(msg) {
+            var box = document.getElementById('toastBox');
+            document.getElementById('toastMsg').innerText = msg;
+            box.classList.remove('translate-y-32');
+            setTimeout(function() { box.classList.add('translate-y-32'); }, 2800);
+        }
+
+        // 3D CARD TILT FOR DESKTOP MOUSE
+        document.querySelectorAll('.card-3d-tilt').forEach(function(card) {
+            card.addEventListener('mousemove', function(e) {
+                var rect = card.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                var percentX = x / rect.width;
+                var percentY = y / rect.height;
+
+                var rotateX = (0.5 - percentY) * 10;
+                var rotateY = (percentX - 0.5) * 10;
+
+                card.style.transform = "perspective(1000px) rotateX(" + rotateX + "deg) rotateY(" + rotateY + "deg) translateY(-3px)";
+            });
+
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            });
+        });
+
+        // 3D CANVAS PROCEDURAL ENGINE
+        var bgCanvas = document.getElementById('disney3DCanvas');
+        var bgCtx = bgCanvas.getContext('2d');
+        function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeBg); resizeBg();
+
+        var mouseX = window.innerWidth / 2;
+        var mouseY = window.innerHeight / 2;
+        var targetMouseX = mouseX;
+        var targetMouseY = mouseY;
+        window.addEventListener('mousemove', function(e) {
+            targetMouseX = e.clientX;
+            targetMouseY = e.clientY;
+        });
+
+        var particles = Array.from({length: 60}, function() {
+            return {
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                z: Math.random() * 800 + 100,
+                speedY: -Math.random() * 0.5 - 0.2,
+                color: (Math.random() > 0.4) ? '#00ffff' : ((Math.random() > 0.5) ? '#0063e5' : '#fbbf24')
+            };
+        });
+
+        var lanterns = Array.from({length: 18}, function() {
+            return {
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height + bgCanvas.height * 0.3,
+                z: Math.random() * 600 + 200,
+                speedY: -Math.random() * 0.4 - 0.2,
+                swayAngle: Math.random() * Math.PI * 2,
+                swaySpeed: Math.random() * 0.02 + 0.01
+            };
+        });
+
+        var shootingStars = [];
+        function createShootingStar() {
+            shootingStars.push({
+                x: Math.random() * bgCanvas.width * 0.8,
+                y: Math.random() * bgCanvas.height * 0.4,
+                len: Math.random() * 90 + 40,
+                speed: Math.random() * 9 + 6,
+                angle: Math.PI / 4,
+                alpha: 1
+            });
+        }
+        setInterval(createShootingStar, 3500);
+
+        function drawDisneyCastle(ctx, w, h, pX) {
+            ctx.save();
+            ctx.fillStyle = "rgba(3, 5, 16, 0.94)";
+            var baseH = h * 0.94;
+            var midX = w * 0.5 + pX * 0.02;
+
+            ctx.beginPath();
+            ctx.moveTo(midX - 35, h); ctx.lineTo(midX - 35, baseH - 85); ctx.lineTo(midX, baseH - 165); ctx.lineTo(midX + 35, baseH - 85); ctx.lineTo(midX + 35, h);
+            ctx.moveTo(midX - 95, h); ctx.lineTo(midX - 95, baseH - 55); ctx.lineTo(midX - 70, baseH - 120); ctx.lineTo(midX - 45, baseH - 55); ctx.lineTo(midX - 45, h);
+            ctx.moveTo(midX + 45, h); ctx.lineTo(midX + 45, baseH - 55); ctx.lineTo(midX + 70, baseH - 120); ctx.lineTo(midX + 95, baseH - 55); ctx.lineTo(midX + 95, h);
+            ctx.fill();
+
+            ctx.fillStyle = "#fef08a";
+            ctx.shadowBlur = 12; ctx.shadowColor = "#fef08a";
+            ctx.fillRect(midX - 6, baseH - 60, 12, 18);
+            ctx.fillRect(midX - 74, baseH - 40, 8, 14);
+            ctx.fillRect(midX + 66, baseH - 40, 8, 14);
+
+            ctx.fillStyle = "#00ffff";
+            ctx.shadowBlur = 22; ctx.shadowColor = "#00ffff";
+            ctx.beginPath(); ctx.arc(midX, baseH - 165, 4, 0, Math.PI*2); ctx.fill();
+
+            ctx.strokeStyle = "rgba(0, 255, 255, 0.35)";
+            ctx.lineWidth = 2.5;
+            ctx.shadowBlur = 15; ctx.shadowColor = "#00ffff";
+            ctx.beginPath();
+            ctx.arc(midX, baseH - 60, 140, Math.PI * 0.95, Math.PI * 2.05);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function animate3D() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            mouseX += (targetMouseX - mouseX) * 0.05;
+            mouseY += (targetMouseY - mouseY) * 0.05;
+            var pX = (mouseX - window.innerWidth / 2);
+            var pY = (mouseY - window.innerHeight / 2);
+
+            particles.forEach(function(p) {
+                p.y += p.speedY;
+                if (p.y < 0) { p.y = bgCanvas.height; p.x = Math.random() * bgCanvas.width; }
+                var scale = 400 / p.z;
+                var drawX = p.x + pX * (scale * 0.08);
+                var drawY = p.y + pY * (scale * 0.08);
+                var size = Math.max(1.2, scale * 3.2);
+
+                bgCtx.save();
+                bgCtx.globalAlpha = Math.min(0.9, scale * 1.1);
+                bgCtx.fillStyle = p.color;
+                bgCtx.shadowBlur = 12; bgCtx.shadowColor = p.color;
+                bgCtx.beginPath();
+                bgCtx.arc(drawX, drawY, size, 0, Math.PI * 2);
+                bgCtx.fill();
+                bgCtx.restore();
+            });
+
+            lanterns.forEach(function(l) {
+                l.y += l.speedY;
+                l.swayAngle += l.swaySpeed;
+                if (l.y < -50) { l.y = bgCanvas.height + 30; l.x = Math.random() * bgCanvas.width; }
+                var scale = 350 / l.z;
+                var swayX = Math.sin(l.swayAngle) * (15 * scale);
+                var drawX = l.x + swayX + pX * (scale * 0.15);
+                var drawY = l.y + pY * (scale * 0.15);
+
+                bgCtx.save();
+                bgCtx.globalAlpha = Math.min(0.85, scale * 1.4);
+                bgCtx.fillStyle = "#f59e0b";
+                bgCtx.shadowBlur = 20 * scale; bgCtx.shadowColor = "#f59e0b";
+                bgCtx.fillRect(drawX - 4 * scale, drawY - 6 * scale, 8 * scale, 12 * scale);
+                bgCtx.fillStyle = "#ffffff";
+                bgCtx.beginPath();
+                bgCtx.arc(drawX, drawY, 2.5 * scale, 0, Math.PI * 2);
+                bgCtx.fill();
+                bgCtx.restore();
+            });
+
+            for (var i = shootingStars.length - 1; i >= 0; i--) {
+                var s = shootingStars[i];
+                s.x += Math.cos(s.angle) * s.speed;
+                s.y += Math.sin(s.angle) * s.speed;
+                s.alpha -= 0.02;
+
+                if (s.alpha <= 0) {
+                    shootingStars.splice(i, 1);
+                    continue;
+                }
+
+                bgCtx.save();
+                bgCtx.strokeStyle = "rgba(0, 255, 255, " + s.alpha + ")";
+                bgCtx.lineWidth = 2.2;
+                bgCtx.shadowBlur = 10; bgCtx.shadowColor = "#00ffff";
+                bgCtx.beginPath();
+                bgCtx.moveTo(s.x, s.y);
+                bgCtx.lineTo(s.x - Math.cos(s.angle) * s.len, s.y - Math.sin(s.angle) * s.len);
+                bgCtx.stroke();
+                bgCtx.restore();
+            }
+
+            drawDisneyCastle(bgCtx, bgCanvas.width, bgCanvas.height, pX);
+            requestAnimationFrame(animate3D);
+        }
+        animate3D();
+        lucide.createIcons();
+    </script>
+</body>
+</html>
